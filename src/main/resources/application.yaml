@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: Autoparts store
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/autoparts_db
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+server:
+  port: 8080

@@ -3,10 +3,11 @@ spring:
     name: Autoparts store
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/autoparts_db
+    url: jdbc:postgresql://localhost:5432/autoparts_db?CurrentSchema=public
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver
+
 
   jpa:
     hibernate:
@@ -17,6 +18,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 
 
 server:

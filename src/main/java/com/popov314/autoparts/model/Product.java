@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Product {
   private Manufacture manufacture;
 
   @Column(name = "price", nullable = false, precision = 10, scale = 2)
-  private double price;
+  private BigDecimal price;
 
   @Column(name = "article", unique = true)
   private String article;

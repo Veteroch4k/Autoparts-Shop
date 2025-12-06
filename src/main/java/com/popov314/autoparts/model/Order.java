@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +46,6 @@ public class Order {
 
   @Column(name = "order_price", nullable = false, precision = 10, scale = 2)
   @Positive
-  private double orderPrice;
+  private BigDecimal orderPrice;
 
 }

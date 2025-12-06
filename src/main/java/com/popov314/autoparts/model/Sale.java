@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class Sale {
 
   @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
   @Positive
-  private double totalPrice;
+  private BigDecimal totalPrice;
 
   @Column(name = "sale_date", nullable = false)
   @CreationTimestamp

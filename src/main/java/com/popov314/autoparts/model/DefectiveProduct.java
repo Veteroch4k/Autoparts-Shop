@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,7 @@ public class DefectiveProduct {
   private Supplier supplier;
 
   @Column(name = "refund_amount", nullable = false ,precision = 10, scale = 2)
-  private double refundAmount;
+  private BigDecimal refundAmount;
 
   @Column(name = "return_date")
   @CreationTimestamp

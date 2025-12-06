@@ -22,6 +22,6 @@ public class Specialty {
   private int id;
 
   @Column(name = "name", nullable = false, unique = true, length = 25)
-  private int name;
+  private String name;
 
 }

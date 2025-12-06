@@ -55,7 +55,7 @@ public class Employee {
   private City city;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "city_id")
+  @JoinColumn(name = "street_id")
   private Street street;
 
   @Column(name = "house_number", nullable = false, length = 10)

@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
@@ -38,7 +39,7 @@ public class Delivery {
 
   @Column(name = "delivery_price", nullable = false, precision = 10, scale = 2)
   @Positive
-  private double deliveryPrice;
+  private BigDecimal deliveryPrice;
 
   @Column(name = "delivery_date")
   @CreationTimestamp

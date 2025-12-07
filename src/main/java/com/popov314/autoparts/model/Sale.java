@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,14 +29,18 @@ public class Sale {
 
   @Column(name = "quantity", nullable = false)
   @Positive
+  @NotNull
   private short quantity;
 
   @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
   @Positive
+  @NotNull
+  @Digits(integer = 8, fraction = 2)
   private BigDecimal totalPrice;
 
   @Column(name = "sale_date", nullable = false)
   @CreationTimestamp
+  @NotNull
   private LocalDateTime saleDate;
 
 

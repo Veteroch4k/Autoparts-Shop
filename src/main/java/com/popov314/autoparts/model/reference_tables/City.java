@@ -24,9 +24,9 @@ public class City {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
-  @Column(name = "name", unique = true, length = 25)
-  @NotBlank
-  @Size(max = 25)
+  @Column(name = "name", nullable = false, unique = true, length = 25)
+  @NotBlank(message = "Название города обязательно для заполнения")
+  @Size(max = 25, message = "Название города не может превышать длину в {max} символов")
   private String name;
 
 

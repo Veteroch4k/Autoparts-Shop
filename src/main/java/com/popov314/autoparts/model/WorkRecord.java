@@ -17,6 +17,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,6 +48,8 @@ public class WorkRecord {
   private ActionType action;
 
   @Column(name = "action_reason", nullable = false, length = 25)
+  @NotBlank(message = "Причина должна быть изложена")
+  @Size(max = 25, message = "Причина должна быть изложена максимально кратко, не превышая длину в {max} символов")
   private String actionReason;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -68,12 +73,15 @@ public class WorkRecord {
   private Qualification qualification;
 
   @Column(name = "hiring_date", nullable = false)
+  @NotNull
   private LocalDate hiringDate;
 
   @Column(name = "firing_date", nullable = false)
+  @NotNull
   private LocalDate firingDate;
 
   @Column(name = "transfer_date", nullable = false)
+  @NotNull
   private LocalDate transferDate;
 
   @Column(name = "reason_of_leaving")

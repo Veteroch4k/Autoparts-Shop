@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,8 @@ public class Manufacture {
   private int id;
 
   @Column(name = "name", nullable = false, length = 200, unique = true)
+  @NotBlank(message = "Название производителя обязательно для заполнения")
+  @Size(max = 200, message = "Название производителя не может превышать длину в {max} символов")
   private String name;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +42,8 @@ public class Manufacture {
   private Street street;
 
   @Column(name = "house_number", nullable = false, length = 10)
+  @NotBlank(message = "Номер дома обязателен для заполнения")
+  @Size(max = 10, message = "Номер дома не может превышать длину в {max} символов")
   private String houseNumber;
 
 

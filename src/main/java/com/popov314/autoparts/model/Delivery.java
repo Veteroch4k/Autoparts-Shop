@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,6 +41,8 @@ public class Delivery {
 
   @Column(name = "delivery_price", nullable = false, precision = 10, scale = 2)
   @Positive
+  @NotNull
+  @Digits(integer = 8, fraction = 2)
   private BigDecimal deliveryPrice;
 
   @Column(name = "delivery_date")

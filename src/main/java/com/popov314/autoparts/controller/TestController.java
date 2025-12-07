@@ -15,9 +15,8 @@ public class TestController {
   CityRepository repository;
 
   @GetMapping("")
-  public City getCity() {
-    System.out.println(repository.findById(1).get());
-    return repository.findById(1).get();
+  public String index() {
+    return "index";
   }
 
 }

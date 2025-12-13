@@ -1,7 +1,10 @@
 package com.popov314.autoparts.config;
 
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,9 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -19,17 +24,29 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfiguration {
 
-  private final PasswordEncoder pwEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  @Autowired
+  private DataSource dataSource;
 
   @Bean
-  UserDetailsService authenticayion() {
-    UserDetails director = User.builder()
-        .username("director")
-        .password(pwEncoder.encode("director"))
-        .roles("USER", "ADMIN")
-        .build();
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(8);
+  }
 
-    return new InMemoryUserDetailsManager(director);
+  @Bean
+  public UserDetailsService authentication() {
+
+    JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
+
+    manager.setUsersByUsernameQuery(
+        "SELECT username, password, enabled FROM users WHERE username = ?"
+    );
+
+    manager.setAuthoritiesByUsernameQuery(
+        "SELECT username, role FROM users WHERE username = ?"
+    );
+
+    return manager;
+
   }
 
   @Bean
@@ -43,6 +60,7 @@ public class SecurityConfiguration {
         .httpBasic(Customizer.withDefaults());
 
     return http.build();
+
 
   }
 

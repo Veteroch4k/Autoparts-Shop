@@ -83,9 +83,10 @@ class SupplyController {
     ProductSupplier ps = new ProductSupplier();
     ps.setId(new ProductSupplierId());
 
-    model.addAttribute("ps", ps);
+    model.addAttribute("productSupplier", ps);
     model.addAttribute("perms", menuService.getPagePermissions("/supply/psuppliers", authentication));
     return "/supply/productSuppliers";
+
   }
 
   @PostMapping("/psuppliers/save")
@@ -101,13 +102,14 @@ class SupplyController {
     ps.setSupplier(supplierRef);
 
     productSupplierRepository.save(ps);
-    return "redirect:/supply/productSuppliers";
+    return "redirect:/supply/psuppliers";
+
   }
 
   @DeleteMapping("/psuppliers/delete/{pId}/{sId}")
   @PreAuthorize("hasRole('DIRECTOR')")
   public String deleteProductSuppliers(@PathVariable int pId, @PathVariable int sId) {
     productSupplierRepository.deleteById(new ProductSupplierId(pId, sId));
-    return "redirect:/supply/productSuppliers";
+    return "redirect:/supply/psuppliers";
   }
 }

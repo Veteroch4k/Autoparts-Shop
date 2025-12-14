@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Трудовые записи</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Трудовые записи</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-file-contract me-1"></i>
+        Журнал записей
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="datatablesSimple">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Сотрудник</th>
+              <th>Действие</th>
+              <th>Должность</th>
+              <th>Отдел</th>
+              <th>Даты (Прием/Увол/Пер)</th>
+              <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rec : ${workRecords}">
+              <td th:text="${rec.id}">1</td>
+              <td th:text="${rec.employee != null ? rec.employee.secondName : (rec.id != null ? rec.employee.id : '')}">Сотрудник</td>
+              <td th:text="${rec.action}">hire</td>
+              <td th:text="${rec.position != null ? rec.position.name : ''}">Должность</td>
+              <td th:text="${rec.department != null ? rec.department.name : ''}">Отдел</td>
+              <td>
+                <small>
+                  <span th:text="${rec.hiringDate}"></span> /
+                  <span th:text="${rec.firingDate}"></span> /
+                  <span th:text="${rec.transferDate}"></span>
+                </small>
+              </td>
+              <td>
+                <button type="button" class="btn btn-warning btn-sm"
+                        th:if="${perms.canEdit}"
+                        th:data-id="${rec.id}"
+                        th:data-employeeid="${rec.employee != null ? rec.employee.id : ''}"
+                        th:data-workplaceid="${rec.workPlace != null ? rec.workPlace.id : ''}"
+                        th:data-action="${rec.action}"
+                        th:data-reason="${rec.actionReason}"
+                        th:data-positionid="${rec.position != null ? rec.position.id : ''}"
+                        th:data-departmentid="${rec.department != null ? rec.department.id : ''}"
+                        th:data-professionid="${rec.profession != null ? rec.profession.id : ''}"
+                        th:data-specialtyid="${rec.specialty != null ? rec.specialty.id : ''}"
+                        th:data-qualificationid="${rec.qualification != null ? rec.qualification.id : ''}"
+                        th:data-hiring="${rec.hiringDate}"
+                        th:data-firing="${rec.firingDate}"
+                        th:data-transfer="${rec.transferDate}"
+                        th:data-leaving="${rec.reasonOfLeaving}"
+                        onclick="fillForm(this)">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <form th:action="@{/hr/work-records/delete/{id}(id=${rec.id})}" method="post"
+                      style="display:inline;"
+                      th:if="${perms.canDelete}">
+                  <input type="hidden" name="_method" value="delete" />
+                  <button type="submit" class="btn btn-danger btn-sm"
+                          onclick="return confirm('Удалить запись?');">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить запись</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/hr/work-records/save}" th:object="${workRecord}" method="post" id="entityForm">
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <th:block th:replace="~{blocks/forms :: inputField('employee.id', 'Сотрудник (ID)', 'number')}"></th:block>
+
+            <div class="col-md-4">
+              <div class="form-floating mb-3 mb-md-0">
+                <select class="form-select" id="fieldAction" th:field="*{action}">
+                  <option value="hire">hire (Прием)</option>
+                  <option value="fire">fire (Увольнение)</option>
+                  <option value="transfer">transfer (Перевод)</option>
+                </select>
+                <label for="fieldAction">Тип действия</label>
+              </div>
+            </div>
+
+            <th:block th:replace="~{blocks/forms :: inputField('workPlace.id', 'Место работы (ID)', 'number')}"></th:block>
+          </div>
+
+          <div class="row mb-3">
+            <th:block th:replace="~{blocks/forms :: inputField('position.id', 'Должность (ID)', 'number')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('department.id', 'Отдел (ID)', 'number')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('profession.id', 'Профессия (ID)', 'number')}"></th:block>
+          </div>
+
+          <div class="row mb-3">
+            <th:block th:replace="~{blocks/forms :: inputField('specialty.id', 'Специальность (ID)', 'number')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('qualification.id', 'Квалификация (ID)', 'number')}"></th:block>
+          </div>
+
+          <div class="row mb-3">
+            <th:block th:replace="~{blocks/forms :: inputField('actionReason', 'Причина (основание)', 'text')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('reasonOfLeaving', 'Причина ухода', 'text')}"></th:block>
+          </div>
+
+          <div class="row mb-3">
+            <th:block th:replace="~{blocks/forms :: inputField('hiringDate', 'Дата приема', 'date')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('firingDate', 'Дата увольнения', 'date')}"></th:block>
+            <th:block th:replace="~{blocks/forms :: inputField('transferDate', 'Дата перевода', 'date')}"></th:block>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
+    function fillForm(btn) {
+      let id = btn.getAttribute('data-id');
+
+      setVal(['fieldId'], id);
+      setVal(['fieldEmployeeId', 'fieldEmployee.id', 'fieldEmployee'], btn.getAttribute('data-employeeid'));
+      setVal(['fieldWorkPlaceId', 'fieldWorkPlace.id', 'fieldWorkPlace'], btn.getAttribute('data-workplaceid'));
+      setVal(['fieldPositionId', 'fieldPosition.id', 'fieldPosition'], btn.getAttribute('data-positionid'));
+      setVal(['fieldDepartmentId', 'fieldDepartment.id', 'fieldDepartment'], btn.getAttribute('data-departmentid'));
+      setVal(['fieldProfessionId', 'fieldProfession.id', 'fieldProfession'], btn.getAttribute('data-professionid'));
+      setVal(['fieldSpecialtyId', 'fieldSpecialty.id', 'fieldSpecialty'], btn.getAttribute('data-specialtyid'));
+      setVal(['fieldQualificationId', 'fieldQualification.id', 'fieldQualification'], btn.getAttribute('data-qualificationid'));
+
+      setVal(['fieldAction'], btn.getAttribute('data-action'));
+      setVal(['fieldActionReason'], btn.getAttribute('data-reason'));
+      setVal(['fieldReasonOfLeaving'], btn.getAttribute('data-leaving'));
+
+      setVal(['fieldHiringDate'], btn.getAttribute('data-hiring'));
+      setVal(['fieldFiringDate'], btn.getAttribute('data-firing'));
+      setVal(['fieldTransferDate'], btn.getAttribute('data-transfer'));
+
+      document.getElementById('formTitle').innerText = 'Редактирование записи (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      let fields = ['fieldId', 'fieldEmployeeId', 'fieldWorkPlaceId', 'fieldPositionId',
+        'fieldDepartmentId', 'fieldProfessionId', 'fieldSpecialtyId',
+        'fieldQualificationId', 'fieldAction', 'fieldActionReason',
+        'fieldReasonOfLeaving', 'fieldHiringDate', 'fieldFiringDate', 'fieldTransferDate'];
+
+      document.getElementById('entityForm').reset();
+      document.getElementById('fieldId').value = '';
+
+      document.getElementById('formTitle').innerText = 'Добавить запись';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+</body>
+</html>

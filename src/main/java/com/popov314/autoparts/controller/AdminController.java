@@ -1,9 +1,9 @@
 package com.popov314.autoparts.controller;
 
-import com.popov314.autoparts.model.Supplier;
 import com.popov314.autoparts.model.gui.User;
 import com.popov314.autoparts.repository.gui.UserRepository;
 import com.popov314.autoparts.service.MenuService;
+import com.popov314.autoparts.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,27 +22,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @PreAuthorize("hasRole('DIRECTOR')")
 public class AdminController {
 
-  private UserRepository repository;
+  private final UserRepository userRepository;
   private final MenuService menuService;
+  private final UserService userService;
 
 
   @GetMapping("/users")
   public String users(Model model, Authentication authentication) {
-    model.addAttribute("suppliers", repository.findAll());
-    model.addAttribute("supplier", new Supplier());
+    model.addAttribute("users", userRepository.findAll());
+    model.addAttribute("user", new User());
     model.addAttribute("perms", menuService.getPagePermissions("/admin/users", authentication));
     return "/admin/users";
   }
 
   @PostMapping("/users/save")
   public String saveUsers(@ModelAttribute User user) {
-    repository.save(user);
+
+    if(user.getId() == null) userService.registerNewUser(user);
+    else userRepository.save(user);
+
     return "redirect:/admin/users";
   }
 
   @DeleteMapping("/users/delete/{id}")
   public String deleteUsers(@PathVariable int id) {
-    repository.deleteById(id);
+    userRepository.deleteById(id);
     return "redirect:/admin/users";
   }
 

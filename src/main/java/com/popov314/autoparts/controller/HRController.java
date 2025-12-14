@@ -108,25 +108,25 @@ class HRController {
     return "redirect:/hr/positions";
   }
 
-  @GetMapping("/work_records")
+  @GetMapping("/work-records")
   public String workRecords(Model model, Authentication authentication) {
     model.addAttribute("workRecords", workRecordRepository.findAll());
     model.addAttribute("workRecord", new WorkRecord());
-    model.addAttribute("perms", menuService.getPagePermissions("/hr/work_records", authentication));
+    model.addAttribute("perms", menuService.getPagePermissions("/hr/work-records", authentication));
     return "/hr/work_records";
   }
 
-  @PostMapping("/work_records/save")
+  @PostMapping("/work-records/save")
   public String saveWorkRecord(@ModelAttribute WorkRecord workRecord) {
     workRecordRepository.save(workRecord);
-    return "redirect:/hr/work_records";
+    return "redirect:/hr/work-records";
   }
 
-  @DeleteMapping("/work_records/delete/{id}")
+  @DeleteMapping("/work-records/delete/{id}")
   @PreAuthorize("hasRole('DIRECTOR')")
   public String deleteWorkRecord(@PathVariable int id) {
     workRecordRepository.deleteById(id);
-    return "redirect:/hr/work_records";
+    return "redirect:/hr/work-records";
   }
 
 

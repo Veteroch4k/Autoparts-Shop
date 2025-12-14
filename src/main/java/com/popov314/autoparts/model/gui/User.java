@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "users")
@@ -34,6 +35,7 @@ public class User {
   private boolean enabled;
 
   @Column(name = "created_at")
+  @CreationTimestamp
   private LocalDateTime created_at;
 
 }

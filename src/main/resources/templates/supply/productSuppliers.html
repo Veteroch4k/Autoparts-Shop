@@ -63,8 +63,8 @@
       </div>
       <div class="card-body">
         <form th:action="@{/supply/psuppliers/save}" th:object="${productSupplier}" method="post" id="entityForm">
-          <input type="hidden" id="fieldProductIdHidden" th:value="*{id != null ? id.productId : ''}">
-          <input type="hidden" id="fieldSupplierIdHidden" th:value="*{id != null ? id.supplierId : ''}">
+          <input type="hidden" id="fieldProductIdHidden" th:value="*{id?.productId}">
+          <input type="hidden" id="fieldSupplierIdHidden" th:value="*{id?.supplierId}">
 
           <div class="row mb-3">
             <div class="row mb-3">

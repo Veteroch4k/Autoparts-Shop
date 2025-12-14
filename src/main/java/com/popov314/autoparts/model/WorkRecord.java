@@ -44,7 +44,6 @@ public class WorkRecord {
   @JoinColumn(name = "work_place_id")
   private WorkPlace workPlace;
 
-  @Enumerated(EnumType.STRING)
   private ActionType action;
 
   @Column(name = "action_reason", nullable = false, length = 25)
@@ -88,11 +87,6 @@ public class WorkRecord {
   private String reasonOfLeaving;
 
 
-}
-
-enum ActionType {
-  MALE,
-  FEMALE,
 }
 
 

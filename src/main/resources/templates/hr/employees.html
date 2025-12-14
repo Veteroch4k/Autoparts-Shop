@@ -37,7 +37,7 @@
             <td th:text="${employee.firstName}">Иван</td>
             <td th:text="${employee.secondName}">Иванов</td>
             <td th:text="${employee.middleName}">Иванович</td>
-            <td th:text="${employee.gender}">MAN</td>
+            <td th:text="${employee.gender}">man</td>
             <td th:text="${employee.birthDate}">2000-01-01</td>
             <td th:text="${employee.experienceYears}">3</td>
             <td th:text="${employee.city != null ? employee.city.name : ''}">Город</td>
@@ -97,8 +97,8 @@
                 <label for="fieldGender" class="form-label">Пол</label>
                 <select class="form-select" id="fieldGender" name="gender" th:field="*{gender}">
                   <option value="" selected>—</option>
-                  <option value="MAN">MAN</option>
-                  <option value="WOMAN">WOMAN</option>
+                  <option value="man">man</option>
+                  <option value="woman">woman</option>
                 </select>
               </div>
 

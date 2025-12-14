@@ -86,9 +86,11 @@
               <label for="fieldRole" class="form-label">Роль</label>
               <select class="form-select" id="fieldRole" name="role" th:field="*{role}">
                 <option value="" selected>—</option>
-                <option value="DIRECTOR">DIRECTOR</option>
-                <option value="MANAGER">HR_MANAGER</option>
-                <option value="EMPLOYEE">EMPLOYEE</option>
+                <option value="ROLE_DIRECTOR">ROLE_DIRECTOR</option>
+                <option value="ROLE_HR">ROLE_HR</option>
+                <option value="ROLE_SALES">ROLE_SALES</option>
+                <option value="ROLE_SUPPLY">ROLE_SUPPLY</option>
+                <option value="ROLE_GUEST">ROLE_GUEST</option>
               </select>
             </div>
 
@@ -100,10 +102,6 @@
               </select>
             </div>
 
-            <div class="col-md-4">
-              <label for="fieldCreatedAt" class="form-label">Создан</label>
-              <input type="datetime-local" class="form-control" id="fieldCreatedAt" name="created_at" th:field="*{created_at}">
-            </div>
           </div>
 
           <div class="mt-4 mb-0">
@@ -132,21 +130,12 @@
       let email = button.getAttribute('data-email');
       let role = button.getAttribute('data-role');
       let enabled = button.getAttribute('data-enabled');
-      let createdAt = button.getAttribute('data-createdat');
 
       setVal(['fieldId'], id);
       setVal(['fieldUserName'], username);
       setVal(['fieldEmail'], email);
       setVal(['fieldRole'], role);
       setVal(['fieldEnabled'], enabled === 'true' ? 'true' : 'false');
-
-      if (createdAt) {
-        let v = createdAt.replace(' ', 'T');
-        if (v.length >= 16) v = v.substring(0, 16);
-        setVal(['fieldCreatedAt'], v);
-      } else {
-        setVal(['fieldCreatedAt'], '');
-      }
 
       document.getElementById('formTitle').innerText = 'Редактирование пользователя (ID: ' + id + ')';
       document.getElementById('submitBtn').innerText = 'Обновить';
@@ -163,7 +152,6 @@
       setVal(['fieldPassword'], '');
       setVal(['fieldRole'], '');
       setVal(['fieldEnabled'], 'true');
-      setVal(['fieldCreatedAt'], '');
 
       document.getElementById('formTitle').innerText = 'Добавить нового пользователя';
       document.getElementById('submitBtn').innerText = 'Сохранить';

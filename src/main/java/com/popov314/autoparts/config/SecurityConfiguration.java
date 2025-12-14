@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,23 +49,42 @@ public class SecurityConfiguration {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
     http
+
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/public/**").permitAll()
-            .anyRequest().authenticated())
-        .formLogin(Customizer.withDefaults())
-        .logout((logout) -> logout
-            .logoutUrl("/logout")             // URL, по которому происходит выход
-            .logoutSuccessUrl("/login")       // Куда перенаправить после выхода
-            .permitAll())
-        .httpBasic(Customizer.withDefaults());
+
+            .requestMatchers("/admin/**").hasRole("DIRECTOR")
+
+            .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+
+            .requestMatchers("/auth/login", "/auth/register", "/auth/forgot-password","/auth/reset-password", "/public/**").permitAll()
+
+            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+
+            .anyRequest().authenticated()
+        )
+
+        .formLogin(form -> form
+            .loginPage("/auth/login")           // URL контроллера, который возвращает HTML страницу входа
+            .loginProcessingUrl("/perform-login") // URL, на который форма должна отправлять POST запрос (action="...")
+            .defaultSuccessUrl("/", true)       // Куда перенаправить после успешного входа
+            .failureUrl("/auth/login?error=true") // Куда, если пароль неверный
+            .permitAll()
+        )
+
+        // 3. Выход из системы
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/auth/login?logout=true")
+            .deleteCookies("JSESSIONID")
+            .permitAll()
+        );
+
+    // Обработка ошибок
     http.exceptionHandling(ex -> ex
         .accessDeniedPage("/access-denied")
     );
 
-
     return http.build();
-
-
   }
 
 

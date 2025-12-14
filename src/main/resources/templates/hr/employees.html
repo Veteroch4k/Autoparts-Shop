@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Сотрудники</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Сотрудники</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Список сотрудников
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Отчество</th>
+            <th>Пол</th>
+            <th>Дата рождения</th>
+            <th>Стаж (лет)</th>
+            <th>Город</th>
+            <th>Улица</th>
+            <th>Дом</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="employee : ${employees}">
+            <td th:text="${employee.id}">1</td>
+            <td th:text="${employee.firstName}">Иван</td>
+            <td th:text="${employee.secondName}">Иванов</td>
+            <td th:text="${employee.middleName}">Иванович</td>
+            <td th:text="${employee.gender}">MAN</td>
+            <td th:text="${employee.birthDate}">2000-01-01</td>
+            <td th:text="${employee.experienceYears}">3</td>
+            <td th:text="${employee.city != null ? employee.city.name : ''}">Город</td>
+            <td th:text="${employee.street != null ? employee.street.name : ''}">Улица</td>
+            <td th:text="${employee.houseNumber}">10</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm"
+                      th:if="${perms.canEdit}"
+                      th:data-id="${employee.id}"
+                      th:data-firstname="${employee.firstName}"
+                      th:data-secondname="${employee.secondName}"
+                      th:data-middlename="${employee.middleName}"
+                      th:data-gender="${employee.gender}"
+                      th:data-birthdate="${employee.birthDate}"
+                      th:data-experienceyears="${employee.experienceYears}"
+                      th:data-cityid="${employee.city != null ? employee.city.id : ''}"
+                      th:data-streetid="${employee.street != null ? employee.street.id : ''}"
+                      th:data-housenumber="${employee.houseNumber}"
+                      onclick="fillForm(this)">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <form th:action="@{/hr/employees/delete/{id}(id=${employee.id})}" method="post"
+                    style="display:inline;"
+                    th:if="${perms.canDelete}">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Удалить этого сотрудника?');">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить нового сотрудника</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/hr/employees/save}" th:object="${employee}" method="post" id="entityForm">
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('firstName', 'Имя', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('secondName', 'Фамилия', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('middleName', 'Отчество', 'text')}"></th:block>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <label for="fieldGender" class="form-label">Пол</label>
+                <select class="form-select" id="fieldGender" name="gender" th:field="*{gender}">
+                  <option value="" selected>—</option>
+                  <option value="MAN">MAN</option>
+                  <option value="WOMAN">WOMAN</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label for="fieldBirthDate" class="form-label">Дата рождения</label>
+                <input type="date" class="form-control" id="fieldBirthDate" name="birthDate" th:field="*{birthDate}">
+              </div>
+
+              <div class="col-md-4">
+                <label for="fieldExperienceYears" class="form-label">Стаж (лет)</label>
+                <input type="number" class="form-control" id="fieldExperienceYears" name="experienceYears" min="0" max="80" th:field="*{experienceYears}">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('city.id', 'Город (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('street.id', 'Улица (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('houseNumber', 'Номер дома', 'text')}"></th:block>
+            </div>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
+    function fillForm(button) {
+      let id = button.getAttribute('data-id');
+      let firstName = button.getAttribute('data-firstname');
+      let secondName = button.getAttribute('data-secondname');
+      let middleName = button.getAttribute('data-middlename');
+      let gender = button.getAttribute('data-gender');
+      let birthDate = button.getAttribute('data-birthdate');
+      let experienceYears = button.getAttribute('data-experienceyears');
+      let cityId = button.getAttribute('data-cityid');
+      let streetId = button.getAttribute('data-streetid');
+      let houseNumber = button.getAttribute('data-housenumber');
+
+      setVal(['fieldId'], id);
+      setVal(['fieldFirstName'], firstName);
+      setVal(['fieldSecondName'], secondName);
+      setVal(['fieldMiddleName'], middleName);
+
+      setVal(['fieldGender'], gender);
+      setVal(['fieldBirthDate'], birthDate);
+      setVal(['fieldExperienceYears'], experienceYears);
+
+      setVal(['fieldCityId', 'fieldCity.id', 'fieldCity'], cityId);
+      setVal(['fieldStreetId', 'fieldStreet.id', 'fieldStreet'], streetId);
+      setVal(['fieldHouseNumber'], houseNumber);
+
+      document.getElementById('formTitle').innerText = 'Редактирование сотрудника (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      setVal(['fieldId'], '');
+      setVal(['fieldFirstName'], '');
+      setVal(['fieldSecondName'], '');
+      setVal(['fieldMiddleName'], '');
+
+      setVal(['fieldGender'], '');
+      setVal(['fieldBirthDate'], '');
+      setVal(['fieldExperienceYears'], '');
+
+      setVal(['fieldCityId', 'fieldCity.id', 'fieldCity'], '');
+      setVal(['fieldStreetId', 'fieldStreet.id', 'fieldStreet'], '');
+      setVal(['fieldHouseNumber'], '');
+
+      document.getElementById('formTitle').innerText = 'Добавить нового сотрудника';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+</body>
+</html>

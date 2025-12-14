@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Поставщики</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Поставщики</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Список поставщиков
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Телефон</th>
+            <th>Город</th>
+            <th>Улица</th>
+            <th>Дом</th>
+            <th>Сотрудник (ID)</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="supplier : ${suppliers}">
+            <td th:text="${supplier.id}">1</td>
+            <td th:text="${supplier.name}">Поставщик</td>
+            <td th:text="${supplier.phoneNumber}">+7999...</td>
+            <td th:text="${supplier.city != null ? supplier.city.name : ''}">Город</td>
+            <td th:text="${supplier.street != null ? supplier.street.name : ''}">Улица</td>
+            <td th:text="${supplier.houseNumber}">1</td>
+            <td th:text="${supplier.employee != null ? supplier.employee.id : ''}">1</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm"
+                      th:if="${perms.canEdit}"
+                      th:data-id="${supplier.id}"
+                      th:data-name="${supplier.name}"
+                      th:data-phone="${supplier.phoneNumber}"
+                      th:data-cityid="${supplier.city != null ? supplier.city.id : ''}"
+                      th:data-streetid="${supplier.street != null ? supplier.street.id : ''}"
+                      th:data-housenumber="${supplier.houseNumber}"
+                      th:data-employeeid="${supplier.employee != null ? supplier.employee.id : ''}"
+                      onclick="fillForm(this)">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <form th:action="@{/supply/suppliers/delete/{id}(id=${supplier.id})}" method="post"
+                    style="display:inline;"
+                    th:if="${perms.canDelete}">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Удалить этого поставщика?');">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить нового поставщика</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/supply/suppliers/save}" th:object="${supplier}" method="post" id="entityForm">
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('name', 'Название', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('phoneNumber', 'Телефон', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('city.id', 'Город (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('street.id', 'Улица (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('houseNumber', 'Номер дома', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('employee.id', 'Сотрудник (ID)', 'number')}"></th:block>
+            </div>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
+    function fillForm(button) {
+      let id = button.getAttribute('data-id');
+      let name = button.getAttribute('data-name');
+      let phone = button.getAttribute('data-phone');
+      let cityId = button.getAttribute('data-cityid');
+      let streetId = button.getAttribute('data-streetid');
+      let houseNumber = button.getAttribute('data-housenumber');
+      let employeeId = button.getAttribute('data-employeeid');
+
+      setVal(['fieldId'], id);
+      setVal(['fieldName'], name);
+      setVal(['fieldPhoneNumber', 'fieldPhone'], phone);
+      setVal(['fieldCityId', 'fieldCity.id', 'fieldCity'], cityId);
+      setVal(['fieldStreetId', 'fieldStreet.id', 'fieldStreet'], streetId);
+      setVal(['fieldHouseNumber'], houseNumber);
+      setVal(['fieldEmployeeId', 'fieldEmployee.id', 'fieldEmployee'], employeeId);
+
+      document.getElementById('formTitle').innerText = 'Редактирование поставщика (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      setVal(['fieldId'], '');
+      setVal(['fieldName'], '');
+      setVal(['fieldPhoneNumber', 'fieldPhone'], '');
+      setVal(['fieldCityId', 'fieldCity.id', 'fieldCity'], '');
+      setVal(['fieldStreetId', 'fieldStreet.id', 'fieldStreet'], '');
+      setVal(['fieldHouseNumber'], '');
+      setVal(['fieldEmployeeId', 'fieldEmployee.id', 'fieldEmployee'], '');
+
+      document.getElementById('formTitle').innerText = 'Добавить нового поставщика';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+</body>
+</html>

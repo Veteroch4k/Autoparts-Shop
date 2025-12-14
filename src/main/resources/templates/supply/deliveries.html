@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Поставки</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Поставки</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Список поставок
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Товар</th>
+            <th>Поставщик</th>
+            <th>Стоимость поставки</th>
+            <th>Дата поставки</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="delivery : ${deliveries}">
+            <td th:text="${delivery.id}">1</td>
+            <td th:text="${delivery.product != null ? delivery.product.name : ''}">Товар</td>
+            <td th:text="${delivery.supplier != null ? delivery.supplier.name : ''}">Поставщик</td>
+            <td th:text="${delivery.deliveryPrice}">100.00</td>
+            <td th:text="${delivery.deliveryDate}">2025-01-01</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm"
+                      th:if="${perms.canEdit}"
+                      th:data-id="${delivery.id}"
+                      th:data-productid="${delivery.product != null ? delivery.product.id : ''}"
+                      th:data-supplierid="${delivery.supplier != null ? delivery.supplier.id : ''}"
+                      th:data-deliveryprice="${delivery.deliveryPrice}"
+                      onclick="fillForm(this)">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <form th:action="@{/supply/deliveries/delete/{id}(id=${delivery.id})}" method="post"
+                    style="display:inline;"
+                    th:if="${perms.canDelete}">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Удалить эту поставку?');">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить новую поставку</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/supply/deliveries/save}" th:object="${delivery}" method="post" id="entityForm">
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('product.id', 'Товар (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('supplier.id', 'Поставщик (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('deliveryPrice', 'Стоимость поставки', 'number')}"></th:block>
+            </div>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
+    function fillForm(button) {
+      let id = button.getAttribute('data-id');
+      let productId = button.getAttribute('data-productid');
+      let supplierId = button.getAttribute('data-supplierid');
+      let deliveryPrice = button.getAttribute('data-deliveryprice');
+
+      setVal(['fieldId'], id);
+      setVal(['fieldProductId', 'fieldProduct.id', 'fieldProduct'], productId);
+      setVal(['fieldSupplierId', 'fieldSupplier.id', 'fieldSupplier'], supplierId);
+      setVal(['fieldDeliveryPrice'], deliveryPrice);
+
+      document.getElementById('formTitle').innerText = 'Редактирование поставки (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      setVal(['fieldId'], '');
+      setVal(['fieldProductId', 'fieldProduct.id', 'fieldProduct'], '');
+      setVal(['fieldSupplierId', 'fieldSupplier.id', 'fieldSupplier'], '');
+      setVal(['fieldDeliveryPrice'], '');
+
+      document.getElementById('formTitle').innerText = 'Добавить новую поставку';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Товары</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Товары</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Список товаров
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Производитель</th>
+            <th>Цена</th>
+            <th>Артикул</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="product : ${products}">
+            <td th:text="${product.id}">1</td>
+            <td th:text="${product.name}">Товар</td>
+            <td th:text="${product.description}">Описание</td>
+            <td th:text="${product.manufacture != null ? product.manufacture.name : ''}">Производитель</td>
+            <td th:text="${product.price}">100.00</td>
+            <td th:text="${product.article}">A-1</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm"
+                      th:if="${perms.canEdit}"
+                      th:data-id="${product.id}"
+                      th:data-name="${product.name}"
+                      th:data-description="${product.description}"
+                      th:data-manufactureid="${product.manufacture != null ? product.manufacture.id : ''}"
+                      th:data-price="${product.price}"
+                      th:data-article="${product.article}"
+                      onclick="fillForm(this)">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <form th:action="@{/store/products/delete/{id}(id=${product.id})}" method="post"
+                    style="display:inline;"
+                    th:if="${perms.canDelete}">
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Удалить этот товар?');">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить новый товар</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/store/products/save}" th:object="${product}" method="post" id="entityForm">
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('name', 'Название', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('description', 'Описание', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('manufacture.id', 'Производитель (ID)', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('price', 'Цена', 'number')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('article', 'Артикул', 'text')}"></th:block>
+            </div>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
+    function fillForm(button) {
+      let id = button.getAttribute('data-id');
+      let name = button.getAttribute('data-name');
+      let description = button.getAttribute('data-description');
+      let manufactureId = button.getAttribute('data-manufactureid');
+      let price = button.getAttribute('data-price');
+      let article = button.getAttribute('data-article');
+
+      setVal(['fieldId'], id);
+      setVal(['fieldName'], name);
+      setVal(['fieldDescription'], description);
+      setVal(['fieldManufactureId', 'fieldManufacture.id', 'fieldManufacture'], manufactureId);
+      setVal(['fieldPrice'], price);
+      setVal(['fieldArticle'], article);
+
+      document.getElementById('formTitle').innerText = 'Редактирование товара (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      setVal(['fieldId'], '');
+      setVal(['fieldName'], '');
+      setVal(['fieldDescription'], '');
+      setVal(['fieldManufactureId', 'fieldManufacture.id', 'fieldManufacture'], '');
+      setVal(['fieldPrice'], '');
+      setVal(['fieldArticle'], '');
+
+      document.getElementById('formTitle').innerText = 'Добавить новый товар';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+</body>
+</html>

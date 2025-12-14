@@ -1,56 +1,47 @@
 <!DOCTYPE html>
 <html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
-
 <body>
 <div th:fragment="content">
   <div class="container-fluid px-4">
-    <h1 class="mt-4">Клиенты</h1>
+    <h1 class="mt-4">Квалификации</h1>
     <ol class="breadcrumb mb-4">
-      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
-      <li class="breadcrumb-item active">Клиенты</li>
+      <li class="breadcrumb-item"><a th:href="@{/static}">Главная</a></li>
+      <li class="breadcrumb-item active">Квалификации</li>
     </ol>
 
     <div class="card mb-4">
       <div class="card-header">
         <i class="fas fa-table me-1"></i>
-        Список клиентов
+        Список квалификаций
       </div>
       <div class="card-body">
         <table id="datatablesSimple">
           <thead>
           <tr>
             <th>ID</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Телефон</th>
+            <th>Название</th>
             <th>Действия</th>
           </tr>
           </thead>
           <tbody>
-          <tr th:each="client : ${clients}">
-            <td th:text="${client.id}"></td>
-            <td th:text="${client.firstName}"></td>
-            <td th:text="${client.secondName}"></td>
-            <td th:text="${client.phoneNumber}"></td>
+          <tr th:each="qualification : ${qualifications}">
+            <td th:text="${qualification.id}">1</td>
+            <td th:text="${qualification.name}">Квалификация</td>
             <td>
               <button type="button" class="btn btn-warning btn-sm"
                       th:if="${perms.canEdit}"
-                      th:data-id="${client.id}"
-                      th:data-firstname="${client.firstName}"
-                      th:data-secondname="${client.secondName}"
-                      th:data-phone="${client.phoneNumber}"
+                      th:data-id="${qualification.id}"
+                      th:data-name="${qualification.name}"
                       onclick="fillForm(this)">
                 <i class="fas fa-edit"></i>
               </button>
 
-              <form th:action="@{/trade/clients/delete/{id}(id=${client.id})}" method="post"
+              <form th:action="@{/ref/qualifications/delete/{id}(id=${qualification.id})}" method="post"
                     style="display:inline;"
                     th:if="${perms.canDelete}">
-
                 <input type="hidden" name="_method" value="delete" />
-
                 <button type="submit" class="btn btn-danger btn-sm"
-                        onclick="return confirm('Удалить этого клиента?');">
+                        onclick="return confirm('Удалить эту квалификацию?');">
                   <i class="fas fa-trash"></i>
                 </button>
               </form>
@@ -64,18 +55,15 @@
     <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
       <div class="card-header">
         <i class="fas fa-edit me-1"></i>
-        <span id="formTitle">Добавить нового клиента</span>
+        <span id="formTitle">Добавить новую квалификацию</span>
       </div>
       <div class="card-body">
-        <form th:action="@{/trade/clients/save}" th:object="${client}" method="post" id="clientForm">
-
+        <form th:action="@{/ref/qualifications/save}" th:object="${qualification}" method="post" id="entityForm">
           <input type="hidden" th:field="*{id}" id="fieldId">
 
           <div class="row mb-3">
             <div class="row mb-3">
-              <th:block th:replace="~{blocks/forms :: inputField('firstName', 'Имя', 'text')}"></th:block>
-              <th:block th:replace="~{blocks/forms :: inputField('secondName', 'Фамилия', 'text')}"></th:block>
-              <th:block th:replace="~{blocks/forms :: inputField('phoneNumber', 'Телефон', 'text')}"></th:block>
+              <th:block th:replace="~{blocks/forms :: inputField('name', 'Название', 'text')}"></th:block>
             </div>
           </div>
 
@@ -92,38 +80,38 @@
   </div>
 
   <script>
+    function setVal(ids, value) {
+      for (let i = 0; i < ids.length; i++) {
+        let el = document.getElementById(ids[i]);
+        if (el) { el.value = value; return; }
+      }
+    }
+
     function fillForm(button) {
       let id = button.getAttribute('data-id');
-      let firstName = button.getAttribute('data-firstname');
-      let secondName = button.getAttribute('data-secondname');
-      let phone = button.getAttribute('data-phone');
+      let name = button.getAttribute('data-name');
 
-      document.getElementById('fieldId').value = id;
-      document.getElementById('fieldFirstName').value = firstName;
-      document.getElementById('fieldSecondName').value = secondName;
-      document.getElementById('fieldPhoneNumber').value = phone;
+      setVal(['fieldId'], id);
+      setVal(['fieldName'], name);
 
-      document.getElementById('formTitle').innerText = 'Редактирование клиента (ID: ' + id + ')';
+      document.getElementById('formTitle').innerText = 'Редактирование квалификации (ID: ' + id + ')';
       document.getElementById('submitBtn').innerText = 'Обновить';
       document.getElementById('submitBtn').classList.remove('btn-primary');
       document.getElementById('submitBtn').classList.add('btn-success');
 
-      document.getElementById('clientForm').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('entityForm').scrollIntoView({ behavior: 'smooth' });
     }
 
     function clearForm() {
-      document.getElementById('fieldId').value = '';
-      document.getElementById('fieldFirstName').value = '';
-      document.getElementById('fieldSecondName').value = '';
-      document.getElementById('fieldPhone').value = '';
+      setVal(['fieldId'], '');
+      setVal(['fieldName'], '');
 
-      document.getElementById('formTitle').innerText = 'Добавить нового клиента';
+      document.getElementById('formTitle').innerText = 'Добавить новую квалификацию';
       document.getElementById('submitBtn').innerText = 'Сохранить';
       document.getElementById('submitBtn').classList.add('btn-primary');
       document.getElementById('submitBtn').classList.remove('btn-success');
     }
   </script>
 </div>
-
 </body>
 </html>

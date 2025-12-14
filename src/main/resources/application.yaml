@@ -3,9 +3,9 @@ spring:
     name: Autoparts store
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/autoparts_db?CurrentSchema=public
-    username: postgres
-    password: root
+    url: jdbc:postgresql://localhost:5432/test?CurrentSchema=public
+    username: director1
+    password: director1
     driver-class-name: org.postgresql.Driver
 
 

@@ -1,6 +1,5 @@
 package com.popov314.autoparts.controller;
 
-import com.popov314.autoparts.model.reference_tables.City;
 import com.popov314.autoparts.repository.ref_tables.CityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,5 +17,7 @@ public class TestController {
   public String index() {
     return "index";
   }
+
+
 
 }

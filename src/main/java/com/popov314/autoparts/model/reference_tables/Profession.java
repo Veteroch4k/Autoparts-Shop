@@ -21,7 +21,7 @@ public class Profession {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "name", nullable = false, unique = true, length = 25)
   @NotBlank(message = "Название профессии обязательно для заполнения")

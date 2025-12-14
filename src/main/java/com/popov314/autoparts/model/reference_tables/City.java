@@ -22,7 +22,7 @@ public class City {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "name", nullable = false, unique = true, length = 25)
   @NotBlank(message = "Название города обязательно для заполнения")

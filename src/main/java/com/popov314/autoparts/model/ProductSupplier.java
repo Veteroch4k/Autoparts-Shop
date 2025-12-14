@@ -26,8 +26,8 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 @AllArgsConstructor
 class ProductSupplierId implements Serializable {
-  private int productId;
-  private int supplierId;
+  private Integer productId;
+  private Integer supplierId;
 
 }
 

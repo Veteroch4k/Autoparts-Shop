@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Клиенты</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Клиенты</li>
+    </ol>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Список клиентов
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Телефон</th>
+            <th>Действия</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="client : ${clients}">
+            <td th:text="${client.id}">1</td>
+            <td th:text="${client.firstName}">Иван</td>
+            <td th:text="${client.secondName}">Иванов</td>
+            <td th:text="${client.phoneNumber}">+7999...</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm"
+                      th:if="${perms.canEdit}"
+                      th:data-id="${client.id}"
+                      th:data-firstname="${client.firstName}"
+                      th:data-secondname="${client.secondName}"
+                      th:data-phone="${client.phoneNumber}"
+                      onclick="fillForm(this)">
+                <i class="fas fa-edit"></i>
+              </button>
+
+              <form th:action="@{/trade/clients/delete/{id}(id=${client.id})}" method="post"
+                    style="display:inline;"
+                    th:if="${perms.canDelete}">
+
+                <input type="hidden" name="_method" value="delete" />
+
+                <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Удалить этого клиента?');">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-4" th:if="${perms.canWrite or perms.canEdit}">
+      <div class="card-header">
+        <i class="fas fa-edit me-1"></i>
+        <span id="formTitle">Добавить нового клиента</span>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/trade/clients/save}" th:object="${client}" method="post" id="clientForm">
+
+          <input type="hidden" th:field="*{id}" id="fieldId">
+
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <div class="form-floating mb-3 mb-md-0">
+                <input class="form-control" id="fieldFirstName" th:field="*{firstName}" type="text" placeholder="Имя" required />
+                <label for="fieldFirstName">Имя</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating">
+                <input class="form-control" id="fieldSecondName" th:field="*{secondName}" type="text" placeholder="Фамилия" required />
+                <label for="fieldSecondName">Фамилия</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating">
+                <input class="form-control" id="fieldPhone" th:field="*{phoneNumber}" type="text" placeholder="Телефон" required />
+                <label for="fieldPhone">Телефон</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 mb-0">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" onclick="clearForm()">Очистить / Отмена</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function fillForm(button) {
+      let id = button.getAttribute('data-id');
+      let firstName = button.getAttribute('data-firstname');
+      let secondName = button.getAttribute('data-secondname');
+      let phone = button.getAttribute('data-phone');
+
+      document.getElementById('fieldId').value = id;
+      document.getElementById('fieldFirstName').value = firstName;
+      document.getElementById('fieldSecondName').value = secondName;
+      document.getElementById('fieldPhone').value = phone;
+
+      document.getElementById('formTitle').innerText = 'Редактирование клиента (ID: ' + id + ')';
+      document.getElementById('submitBtn').innerText = 'Обновить';
+      document.getElementById('submitBtn').classList.remove('btn-primary');
+      document.getElementById('submitBtn').classList.add('btn-success');
+
+      document.getElementById('clientForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function clearForm() {
+      document.getElementById('fieldId').value = '';
+      document.getElementById('fieldFirstName').value = '';
+      document.getElementById('fieldSecondName').value = '';
+      document.getElementById('fieldPhone').value = '';
+
+      document.getElementById('formTitle').innerText = 'Добавить нового клиента';
+      document.getElementById('submitBtn').innerText = 'Сохранить';
+      document.getElementById('submitBtn').classList.add('btn-primary');
+      document.getElementById('submitBtn').classList.remove('btn-success');
+    }
+  </script>
+</div>
+
+</body>
+</html>

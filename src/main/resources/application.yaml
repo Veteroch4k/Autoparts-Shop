@@ -2,6 +2,14 @@ spring:
   application:
     name: Autoparts store
 
+  devtools:
+    livereload:
+      enabled: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
   datasource:
     url: jdbc:postgresql://localhost:5432/test?CurrentSchema=public
     username: director1

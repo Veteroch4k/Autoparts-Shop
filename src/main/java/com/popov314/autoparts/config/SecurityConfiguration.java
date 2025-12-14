@@ -52,7 +52,15 @@ public class SecurityConfiguration {
             .requestMatchers("/public/**").permitAll()
             .anyRequest().authenticated())
         .formLogin(Customizer.withDefaults())
+        .logout((logout) -> logout
+            .logoutUrl("/logout")             // URL, по которому происходит выход
+            .logoutSuccessUrl("/login")       // Куда перенаправить после выхода
+            .permitAll())
         .httpBasic(Customizer.withDefaults());
+    http.exceptionHandling(ex -> ex
+        .accessDeniedPage("/access-denied")
+    );
+
 
     return http.build();
 

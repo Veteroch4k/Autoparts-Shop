@@ -1,4 +1,4 @@
-package com.popov314.autoparts.repository;
+package com.popov314.autoparts.repository.gui;
 
 import com.popov314.autoparts.model.gui.MenuItem;
 import java.util.List;

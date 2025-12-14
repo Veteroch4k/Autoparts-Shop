@@ -11,6 +11,7 @@ public class MenuDto {
   private List<MenuDto> children;
 
   // Права текущего пользователя на этот пункт
+  private boolean canRead;
   private boolean canWrite;
   private boolean canEdit;
   private boolean canDelete;

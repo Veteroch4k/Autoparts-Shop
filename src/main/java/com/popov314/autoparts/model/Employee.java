@@ -33,7 +33,7 @@ public class Employee {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "first_name", nullable = false, length = 25)
   @NotBlank(message = "Имя обязательно для заполнения")

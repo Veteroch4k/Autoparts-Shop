@@ -10,7 +10,7 @@ public class MenuPermission {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "role_name", nullable = false)
   private String roleName;

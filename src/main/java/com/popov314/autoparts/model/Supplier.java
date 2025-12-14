@@ -26,7 +26,7 @@ public class Supplier {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "name", nullable = false, unique = true, length = 200)
   @NotBlank(message = "Название поставщика обязательно для заполнения")

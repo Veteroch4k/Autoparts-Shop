@@ -21,7 +21,7 @@ public class StorageCell {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "cell_number", nullable = false, unique = true, length = 10)
   @NotBlank(message = "Номер ячейки обязателен для заполнения")

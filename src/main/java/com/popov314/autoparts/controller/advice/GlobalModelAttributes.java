@@ -1,7 +1,7 @@
 package com.popov314.autoparts.controller.advice;
 
 import com.popov314.autoparts.model.gui.MenuItem;
-import com.popov314.autoparts.repository.MenuRepository;
+import com.popov314.autoparts.repository.gui.MenuRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

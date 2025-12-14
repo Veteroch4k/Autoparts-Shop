@@ -22,7 +22,7 @@ public class Department {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "name", nullable = false, unique = true, length = 25)
   @NotBlank(message = "Название департамента обязательно для заполнения")

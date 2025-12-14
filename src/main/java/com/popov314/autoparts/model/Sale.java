@@ -25,7 +25,7 @@ public class Sale {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "quantity", nullable = false)
   @Positive

@@ -21,7 +21,7 @@ public class Qualification {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "name", nullable = false, unique = true, length = 25)
   @NotBlank(message = "Название квалификации обязательно для заполнения")

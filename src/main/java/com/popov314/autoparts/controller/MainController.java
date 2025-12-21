@@ -13,5 +13,15 @@ public class MainController {
     return "index";
   }
 
+  @GetMapping("/guide")
+  public String guide() {
+    return "header/guide";
+  }
+
+  @GetMapping("/settings")
+  public String settings() {
+    return "header/settings";
+  }
+
 
 }

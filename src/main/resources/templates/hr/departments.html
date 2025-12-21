@@ -24,7 +24,7 @@
                       th:data-id="${department.id}"
                       th:data-name="${department.name}"
                       onclick="fillForm(this)"><i class="fas fa-edit"></i></button>
-              <form th:action="@{/hr/departments/delete/{id}(id=${department.id})}" method="post" style="display:inline;" th:if="${perms.canDelete}">
+              <form th:action="@{/hr/departments/delete/{id}(id=${department.id})}" method="post" style="вотdisplay:inline;" th:if="${perms.canDelete}">
                 <input type="hidden" name="_method" value="delete"/>
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить этот отдел?');"><i class="fas fa-trash"></i></button>
               </form>

@@ -25,7 +25,6 @@ public class UserService {
 
     user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    // 4. Сохраняем
     userRepository.save(user);
   }
 

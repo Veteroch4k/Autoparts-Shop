@@ -29,7 +29,6 @@ public class AuthController {
   }
 
   // Страница регистрации
-  // Показ формы
   @GetMapping("/register")
   public String showRegisterForm(Model model) {
     model.addAttribute("user", new User());
@@ -40,7 +39,7 @@ public class AuthController {
   @PostMapping("/register")
   public String registerUser(@ModelAttribute("user") User user, Model model) {
 
-    // 1. Проверка: не занят ли логин?
+    // не занят ли логин
     if (userRepository.findByUserName(user.getUserName()).isPresent()) {
       model.addAttribute("error", "Пользователь с таким логином уже есть");
       return "/auth/register";
@@ -68,7 +67,7 @@ public class AuthController {
     if (userOptional.isPresent()) {
       // Если нашли - сохраняем ID пользователя во временную сессию
       session.setAttribute("RESET_USER_ID", userOptional.get().getId());
-      // И перенаправляем на страницу ввода НОВОГО пароля
+      //перенаправляем на страницу ввода пароля
       return "redirect:/auth/reset-password";
     } else {
       // Если не нашли - ошибка

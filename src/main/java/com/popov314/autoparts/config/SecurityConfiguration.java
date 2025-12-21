@@ -64,10 +64,10 @@ public class SecurityConfiguration {
         )
 
         .formLogin(form -> form
-            .loginPage("/auth/login")           // URL контроллера, который возвращает HTML страницу входа
-            .loginProcessingUrl("/perform-login") // URL, на который форма должна отправлять POST запрос (action="...")
-            .defaultSuccessUrl("/", true)       // Куда перенаправить после успешного входа
-            .failureUrl("/auth/login?error=true") // Куда, если пароль неверный
+            .loginPage("/auth/login")
+            .loginProcessingUrl("/perform-login")
+            .defaultSuccessUrl("/", true)
+            .failureUrl("/auth/login?error=true")
             .permitAll()
         )
 
@@ -79,7 +79,7 @@ public class SecurityConfiguration {
             .permitAll()
         );
 
-    // Обработка ошибок
+    // В процессе -пока не воркает хз хз
     http.exceptionHandling(ex -> ex
         .accessDeniedPage("/access-denied")
     );

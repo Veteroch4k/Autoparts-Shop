@@ -16,9 +16,6 @@
   <!-- Navbar-->
   <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
 
-    <li class="nav-item" sec:authorize="isAnonymous()">
-      <a class="nav-link" th:href="@{/login}">Войти</a>
-    </li>
 
     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
       <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -26,8 +23,8 @@
         <span sec:authentication="name">User</span>
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-        <li><a class="dropdown-item" href="#!">Справка</a></li>
-        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+        <li><a class="dropdown-item" th:href="@{/guide}">Справка</a></li>
+        <li><a class="dropdown-item" th:href="@{/settings}">Разное</a></li>
         <li><hr class="dropdown-divider" /></li>
 
         <li>

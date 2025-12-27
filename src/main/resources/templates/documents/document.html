@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
 <div th:fragment="content">
@@ -17,23 +19,23 @@
           <div class="mb-3">
             <label class="form-label fw-bold">Быстрые отчеты:</label><br>
 
-            <button type="submit" name="reportId" value="1" class="btn btn-outline-primary me-2">
-              <i class="fas fa-list"></i> Список товаров
+            <button type="submit" th:formaction="@{/documents/preset}" name="reportId" value="1" class="btn btn-outline-primary me-2">
+              <i class="fas fa-list"></i> KPI магазина
             </button>
 
-            <button type="submit" name="reportId" value="2" class="btn btn-outline-success me-2">
+            <button type="submit" th:formaction="@{/documents/preset}" name="reportId" value="2" class="btn btn-outline-success me-2">
               <i class="fas fa-chart-bar"></i> Статистика по брендам
             </button>
 
-            <button type="submit" name="reportId" value="3" class="btn btn-outline-danger">
-              <i class="fas fa-ruble-sign"></i> Дорогие товары
+            <button type="submit" th:formaction="@{/documents/preset}" name="reportId" value="3" class="btn btn-outline-danger">
+              <i class="fas fa-ruble-sign"></i> История продаж
             </button>
           </div>
 
           <hr>
 
-          <div class="mb-3">
-            <label class="form-label text-muted">SQL запрос:</label>
+          <div class="mb-3" sec:authorize="hasRole('DIRECTOR')">
+            <label class="form-label text-muted">SQL запрос (Консоль администратора):</label>
             <textarea class="form-control font-monospace"
                       name="sqlQuery"
                       rows="4"

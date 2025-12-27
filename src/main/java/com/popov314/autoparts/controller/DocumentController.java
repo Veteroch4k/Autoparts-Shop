@@ -30,38 +30,35 @@ public class DocumentController {
   public String showPage(Model model) {
     return "documents/document";
   }
+  @PostMapping("/manual")
+  @PreAuthorize("hasRole('DIRECTOR')")
+  public String executeManual(@RequestParam("sqlQuery") String sql, Model model) {
+    return performQuery(sql, model);
+  }
 
-  @PostMapping("/execute")
-  public String executeSql(
-      @RequestParam(value = "sqlQuery", required = false) String sqlQuery, // Текст из поля
-      @RequestParam(value = "reportId", required = false) Integer reportId, // ID кнопки
-      Model model
-  ) {
-    // Если прилетел ID отчета, берем SQL из сервиса.
-    // Иначе берем то, что ввели руками в поле.
-    if (reportId != null) {
-      sqlQuery = documentService.getPredefinedQuery(reportId);
-    }
+  @PostMapping("/preset")
+  @PreAuthorize("hasAnyRole('DIRECTOR', 'SALES')")
+  public String executePreset(@RequestParam("reportId") Integer id, Model model) {
+    String sql = documentService.getPredefinedQuery(id);
+    return performQuery(sql, model);
+  }
 
-    model.addAttribute("sqlQuery", sqlQuery);
-
+  private String performQuery(String sql, Model model) {
+    model.addAttribute("sqlQuery", sql);
     try {
-      if (sqlQuery != null && !sqlQuery.isBlank()) {
-        List<Map<String, Object>> result = documentService.executeQuery(sqlQuery);
-        model.addAttribute("queryResult", result);
-
-        if (!result.isEmpty()) {
-          model.addAttribute("columns", result.getFirst().keySet());
-        } else {
-          model.addAttribute("message", "Запрос вернул пустой результат.");
-        }
+      var result = documentService.executeQuery(sql);
+      model.addAttribute("queryResult", result);
+      if (!result.isEmpty()) {
+        model.addAttribute("columns", result.getFirst().keySet());
+      } else {
+        model.addAttribute("message", "Запрос вернул пустой результат.");
       }
     } catch (Exception e) {
       model.addAttribute("errorMessage", "Ошибка выполнения: " + e.getMessage());
     }
-
     return "documents/document";
   }
+
 
   @PostMapping("/export")
   public void exportToCsv(

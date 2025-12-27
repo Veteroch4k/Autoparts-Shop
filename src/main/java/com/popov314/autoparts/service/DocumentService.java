@@ -5,9 +5,11 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DocumentService {
 
   private final JdbcTemplate jdbcTemplate;
@@ -20,7 +22,7 @@ public class DocumentService {
     return switch (id) {
       case 1 -> """
           SELECT\s
-          (SELECT SUM(product_id) FROM cell_inventory) AS "Общее кол-во деталей",
+          (SELECT SUM(product_quantity) FROM cell_inventory) AS "Общее кол-во деталей",
           (SELECT AVG(order_price) FROM orders) AS "Средняя цена заказа",
           (SELECT MAX(delivery_price) FROM deliveries) AS "Максимальная цена поставки",
           (SELECT MIN(delivery_price) FROM deliveries) AS "Минимальная цена поставки";

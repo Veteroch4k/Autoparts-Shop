@@ -1,85 +1,190 @@
 <!DOCTYPE html>
-<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+
+
 <body>
 <div th:fragment="content">
   <div class="container-fluid px-4">
-    <h1 class="mt-4">Настройки интерфейса</h1>
+    <h1 class="mt-4">Настройки</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a th:href="@{/}">Главная</a></li>
+      <li class="breadcrumb-item active">Настройки</li>
+    </ol>
 
-    <div class="row mt-4">
-      <div class="col-lg-8">
-        <div class="card shadow-sm">
-          <div class="card-header">
-            <i class="fas fa-sliders-h me-1"></i> Персонализация
-          </div>
-          <div class="card-body">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-1"></i> <span th:text="${successMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-circle me-1"></i> <span th:text="${errorMessage}"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-            <h5 class="mb-3">🎨 Тема оформления</h5>
-            <div class="btn-group w-100 mb-4" role="group">
-              <input type="radio" class="btn-check" name="theme" id="themeLight" value="light" autocomplete="off" checked onchange="appSettings.setTheme('light')">
-              <label class="btn btn-outline-secondary" for="themeLight">
-                <i class="fas fa-sun text-warning"></i> Светлая
-              </label>
+    <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="interface-tab" data-bs-toggle="tab" data-bs-target="#interface" type="button" role="tab" aria-controls="interface" aria-selected="true">
+          <i class="fas fa-desktop me-1"></i> Интерфейс
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+          <i class="fas fa-user-lock me-1"></i> Безопасность
+        </button>
+      </li>
+    </ul>
 
-              <input type="radio" class="btn-check" name="theme" id="themeDark" value="dark" autocomplete="off" onchange="appSettings.setTheme('dark')">
-              <label class="btn btn-outline-secondary" for="themeDark">
-                <i class="fas fa-moon text-primary"></i> Темная
-              </label>
+    <div class="tab-content" id="settingsTabsContent">
 
-              <input type="radio" class="btn-check" name="theme" id="themeBlue" value="blue" autocomplete="off" onchange="appSettings.setTheme('blue')">
-              <label class="btn btn-outline-secondary" for="themeBlue">
-                <i class="fas fa-briefcase text-info"></i> Корпоративная
-              </label>
-            </div>
+      <div class="tab-pane fade show active" id="interface" role="tabpanel" aria-labelledby="interface-tab">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+              <div class="card-header">
+                <i class="fas fa-sliders-h me-1"></i> Персонализация
+              </div>
+              <div class="card-body">
 
-            <hr>
+                <h5 class="mb-3">🎨 Тема оформления</h5>
+                <div class="btn-group w-100 mb-4" role="group">
+                  <input type="radio" class="btn-check" name="theme" id="themeLight" value="light" autocomplete="off" checked onchange="appSettings.setTheme('light')">
+                  <label class="btn btn-outline-secondary" for="themeLight">
+                    <i class="fas fa-sun text-warning"></i> Светлая
+                  </label>
 
-            <h5 class="mb-3">🔍 Размер текста</h5>
-            <div class="row mb-4">
-              <div class="col-12">
-                <input type="range" class="form-range" min="1" max="3" step="1" id="fontSizeRange" onchange="appSettings.setFontSize(this.value)">
-                <div class="d-flex justify-content-between text-muted small">
-                  <span>Стандартный</span>
-                  <span>Средний</span>
-                  <span>Крупный (для слабовидящих)</span>
+                  <input type="radio" class="btn-check" name="theme" id="themeDark" value="dark" autocomplete="off" onchange="appSettings.setTheme('dark')">
+                  <label class="btn btn-outline-secondary" for="themeDark">
+                    <i class="fas fa-moon text-primary"></i> Темная
+                  </label>
+
+                  <input type="radio" class="btn-check" name="theme" id="themeBlue" value="blue" autocomplete="off" onchange="appSettings.setTheme('blue')">
+                  <label class="btn btn-outline-secondary" for="themeBlue">
+                    <i class="fas fa-briefcase text-info"></i> Офисная
+                  </label>
                 </div>
+
+                <hr>
+
+                <h5 class="mb-3">🔍 Размер текста</h5>
+                <div class="row mb-4">
+                  <div class="col-12">
+                    <input type="range" class="form-range" min="1" max="3" step="1" id="fontSizeRange" onchange="appSettings.setFontSize(this.value)">
+                    <div class="d-flex justify-content-between text-muted small">
+                      <span>Стандартный</span>
+                      <span>Средний</span>
+                      <span>Крупный</span>
+                    </div>
+                  </div>
+                </div>
+
+                <hr>
+
+                <h5 class="mb-3">🔠 Стиль шрифта</h5>
+                <div class="form-check mb-2">
+                  <input class="form-check-input" type="radio" name="fontFamily" id="fontModern" value="modern" checked onchange="appSettings.setFontFamily('modern')">
+                  <label class="form-check-label" for="fontModern" style="font-family: system-ui, -apple-system, sans-serif;">
+                    Современный (Sans-Serif)
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="fontFamily" id="fontClassic" value="classic" onchange="appSettings.setFontFamily('classic')">
+                  <label class="form-check-label" for="fontClassic" style="font-family: 'Times New Roman', serif; font-size: 1.1rem;">
+                    Классический (Serif)
+                  </label>
+                </div>
+
+              </div>
+              <div class="card-footer text-muted small">
+                * Настройки сохраняются автоматически в браузере.
               </div>
             </div>
-
-            <hr>
-
-            <h5 class="mb-3">🔠 Стиль шрифта</h5>
-            <div class="form-check mb-2">
-              <input class="form-check-input" type="radio" name="fontFamily" id="fontModern" value="modern" checked onchange="appSettings.setFontFamily('modern')">
-              <label class="form-check-label" for="fontModern" style="font-family: system-ui, -apple-system, sans-serif;">
-                Современный (Sans-Serif)
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="fontFamily" id="fontClassic" value="classic" onchange="appSettings.setFontFamily('classic')">
-              <label class="form-check-label" for="fontClassic" style="font-family: 'Times New Roman', serif; font-size: 1.1rem;">
-                Классический (Serif)
-              </label>
-            </div>
-
           </div>
-          <div class="card-footer text-muted small">
-            * Настройки сохраняются автоматически
+
+          <div class="col-lg-4">
+            <div class="card mb-4">
+              <div class="card-header bg-primary text-white">Предпросмотр</div>
+              <div class="card-body">
+                <p>Так будет выглядеть текст.</p>
+                <button class="btn btn-primary w-100 mb-2">Кнопка</button>
+                <div class="alert alert-success">Сообщение</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-4">
-        <div class="card">
-          <div class="card-header bg-primary text-white">Предпросмотр</div>
-          <div class="card-body">
-            <p>Так будет выглядеть текст в приложении.</p>
-            <button class="btn btn-primary w-100 mb-2">Пример кнопки</button>
-            <div class="alert alert-success">Пример сообщения</div>
+      <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+            <div class="card shadow-sm">
+              <div class="card-header bg-danger text-white">
+                <i class="fas fa-key me-1"></i> Смена пароля
+              </div>
+              <div class="card-body">
+
+                <form th:action="@{/settings/change-password}" method="post">
+
+                  <div class="mb-3">
+                    <label for="currentPassword" class="form-label">Текущий пароль</label>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                  </div>
+
+                  <hr>
+
+                  <div class="mb-3">
+                    <label for="newPassword" class="form-label">Новый пароль</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" required minlength="4">
+                    <div class="form-text">Минимум 4 символа.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Подтвердите новый пароль</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                  </div>
+
+                  <div class="d-grid">
+                    <button type="submit" class="btn btn-danger">Обновить пароль</button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
           </div>
+
+          <div class="col-lg-4">
+            <div class="card bg-light mb-4">
+              <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-user-shield"></i> Информация</h5>
+                <p class="card-text">
+                  Вы вошли как: <strong sec:authentication="name">User</strong><br>
+                  Ваши права: <span sec:authentication="principal.authorities"></span>
+                </p>
+                <p class="small text-muted mb-0">
+                  После смены пароля вам, возможно, потребуется войти в систему заново.
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
     </div>
   </div>
 </div>
+
+<script th:if="${activeTab == 'security'}">
+  // Ждем пока загрузится Bootstrap
+  document.addEventListener("DOMContentLoaded", function() {
+    // Находим кнопку таба "Безопасность"
+    var triggerEl = document.querySelector('#security-tab');
+    // Включаем её
+    var tab = new bootstrap.Tab(triggerEl);
+    tab.show();
+  });
+
+</script>
 </body>
 </html>

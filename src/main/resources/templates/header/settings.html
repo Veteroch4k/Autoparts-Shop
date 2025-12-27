@@ -1,10 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
 <body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">Настройки интерфейса</h1>
 
+    <div class="row mt-4">
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <i class="fas fa-sliders-h me-1"></i> Персонализация
+          </div>
+          <div class="card-body">
+
+            <h5 class="mb-3">🎨 Тема оформления</h5>
+            <div class="btn-group w-100 mb-4" role="group">
+              <input type="radio" class="btn-check" name="theme" id="themeLight" value="light" autocomplete="off" checked onchange="appSettings.setTheme('light')">
+              <label class="btn btn-outline-secondary" for="themeLight">
+                <i class="fas fa-sun text-warning"></i> Светлая
+              </label>
+
+              <input type="radio" class="btn-check" name="theme" id="themeDark" value="dark" autocomplete="off" onchange="appSettings.setTheme('dark')">
+              <label class="btn btn-outline-secondary" for="themeDark">
+                <i class="fas fa-moon text-primary"></i> Темная
+              </label>
+
+              <input type="radio" class="btn-check" name="theme" id="themeBlue" value="blue" autocomplete="off" onchange="appSettings.setTheme('blue')">
+              <label class="btn btn-outline-secondary" for="themeBlue">
+                <i class="fas fa-briefcase text-info"></i> Корпоративная
+              </label>
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">🔍 Размер текста</h5>
+            <div class="row mb-4">
+              <div class="col-12">
+                <input type="range" class="form-range" min="1" max="3" step="1" id="fontSizeRange" onchange="appSettings.setFontSize(this.value)">
+                <div class="d-flex justify-content-between text-muted small">
+                  <span>Стандартный</span>
+                  <span>Средний</span>
+                  <span>Крупный (для слабовидящих)</span>
+                </div>
+              </div>
+            </div>
+
+            <hr>
+
+            <h5 class="mb-3">🔠 Стиль шрифта</h5>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" name="fontFamily" id="fontModern" value="modern" checked onchange="appSettings.setFontFamily('modern')">
+              <label class="form-check-label" for="fontModern" style="font-family: system-ui, -apple-system, sans-serif;">
+                Современный (Sans-Serif)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="fontFamily" id="fontClassic" value="classic" onchange="appSettings.setFontFamily('classic')">
+              <label class="form-check-label" for="fontClassic" style="font-family: 'Times New Roman', serif; font-size: 1.1rem;">
+                Классический (Serif)
+              </label>
+            </div>
+
+          </div>
+          <div class="card-footer text-muted small">
+            * Настройки сохраняются автоматически
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header bg-primary text-white">Предпросмотр</div>
+          <div class="card-body">
+            <p>Так будет выглядеть текст в приложении.</p>
+            <button class="btn btn-primary w-100 mb-2">Пример кнопки</button>
+            <div class="alert alert-success">Пример сообщения</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

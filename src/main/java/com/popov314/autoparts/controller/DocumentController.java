@@ -30,7 +30,7 @@ public class DocumentController {
 
   @GetMapping("")
   public String showPage(Model model) {
-    return "documents/document";
+    return "header/document";
   }
   @PostMapping("/manual")
   @PreAuthorize("hasRole('DIRECTOR')")
@@ -39,7 +39,7 @@ public class DocumentController {
 
     model.addAttribute("currentReportId", null);
 
-    return "documents/document";
+    return "header/document";
   }
 
   @PostMapping("/preset")
@@ -53,7 +53,7 @@ public class DocumentController {
 
     model.addAttribute("currentReportId", reportId);
 
-    return "documents/document";
+    return "header/document";
   }
 
   private void performQuery(String sql, Model model) {

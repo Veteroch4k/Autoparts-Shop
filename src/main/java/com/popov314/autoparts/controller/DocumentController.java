@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,17 +35,28 @@ public class DocumentController {
   @PostMapping("/manual")
   @PreAuthorize("hasRole('DIRECTOR')")
   public String executeManual(@RequestParam("sqlQuery") String sql, Model model) {
-    return performQuery(sql, model);
+    performQuery(sql, model);
+
+    model.addAttribute("currentReportId", null);
+
+    return "documents/document";
   }
 
   @PostMapping("/preset")
   @PreAuthorize("hasAnyRole('DIRECTOR', 'SALES')")
-  public String executePreset(@RequestParam("reportId") Integer id, Model model) {
-    String sql = documentService.getPredefinedQuery(id);
-    return performQuery(sql, model);
+  public String executePreset(@RequestParam("reportId") Integer reportId, Model model) {
+    // Получаем SQL по ID
+    String sql = documentService.getPredefinedQuery(reportId);
+
+    // Выполняем
+    performQuery(sql, model);
+
+    model.addAttribute("currentReportId", reportId);
+
+    return "documents/document";
   }
 
-  private String performQuery(String sql, Model model) {
+  private void performQuery(String sql, Model model) {
     model.addAttribute("sqlQuery", sql);
     try {
       var result = documentService.executeQuery(sql);
@@ -56,16 +69,34 @@ public class DocumentController {
     } catch (Exception e) {
       model.addAttribute("errorMessage", "Ошибка выполнения: " + e.getMessage());
     }
-    return "documents/document";
   }
 
 
   @PostMapping("/export")
   public void exportToCsv(
-      @RequestParam("sqlQuery") String sqlQuery,
-      HttpServletResponse response
-  ) throws IOException {
+      @RequestParam(value = "sqlQuery", required = false) String userSql,
+      @RequestParam(value = "reportId", required = false) Integer reportId,
+      HttpServletResponse response,
+      Authentication authentication  ) throws IOException {
 
+    String sqlQuery;
+
+    if (reportId != null) {
+      sqlQuery = documentService.getPredefinedQuery(reportId);
+    }
+    else {
+      // Проверяем роль
+      boolean isDirector = authentication.getAuthorities().stream()
+          .anyMatch(r -> Objects.equals(r.getAuthority(), "ROLE_DIRECTOR"));
+
+      if (!isDirector) {
+        response.sendError(403, "Только директор может экспортировать произвольные запросы");
+        return;
+      }
+
+      // Если директор — доверяем
+      sqlQuery = userSql;
+    }
     // Настраиваем заголовки ответа
     response.setContentType("text/csv; charset=UTF-8");
     String filename = "report_" + System.currentTimeMillis() + ".csv";

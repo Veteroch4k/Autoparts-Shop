@@ -25,6 +25,9 @@
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
         <li><a class="dropdown-item" th:href="@{/guide}">Справка</a></li>
         <li><a class="dropdown-item" th:href="@{/settings}">Разное</a></li>
+        <li sec:authorize="hasAnyRole('DIRECTOR', 'SALES')">
+          <a class="dropdown-item" th:href="@{/documents}">Отчеты</a>
+        </li>
         <li><hr class="dropdown-divider" /></li>
 
         <li>

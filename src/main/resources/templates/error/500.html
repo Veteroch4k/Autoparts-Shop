@@ -22,8 +22,11 @@
                         <div class="text-center mt-4">
                             <h1 class="display-1">500</h1>
                             <p class="lead">Внутренняя ошибка сервера</p>
-                            <p class="text-muted">Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже или обратитесь к администратору.</p>
+                            <p th:if="${message}" th:text="${message}" class="text-danger fw-bold"></p>
 
+                            <p th:unless="${message}" class="text-muted">
+                                Произошла непредвиденная ошибка. Пожалуйста, попробуйте позже или обратитесь к администратору.
+                            </p>
                             <a th:href="@{/}">
                                 <i class="fas fa-arrow-left me-1"></i>
                                 Вернуться на главную

@@ -79,11 +79,6 @@ public class SecurityConfiguration {
             .permitAll()
         );
 
-    // В процессе -пока не воркает хз хз
-    http.exceptionHandling(ex -> ex
-        .accessDeniedPage("/access-denied")
-    );
-
     return http.build();
   }
 

@@ -13,7 +13,7 @@ public class AnalyticsService {
 
   private final JdbcTemplate jdbcTemplate;
 
-  // 1. График: Топ дорогих товаров (Bar Chart)
+  //  Топ дорогих товаров
   public Map<String, Double> getTopExpensiveProducts() {
     String sql = "SELECT name, price FROM products ORDER BY price DESC LIMIT 10";
     Map<String, Double> data = new LinkedHashMap<>();
@@ -29,7 +29,7 @@ public class AnalyticsService {
     return data;
   }
 
-  // 2. График: Динамика продаж (Area Chart) с фильтром
+  // Динамика продаж  с фильтром
   public Map<String, Integer> getSalesDynamics(int days) {
     String timeFilter = "";
 
@@ -57,7 +57,7 @@ public class AnalyticsService {
     return data;
   }
 
-  // 3. График: Бренды (Pie Chart) - ВОТ ЭТОГО НЕ ХВАТАЛО
+  // Бренды
   public Map<String, Integer> getProductsByManufacture() {
     String sql = """
             SELECT m.name, COUNT(p.id) as cnt 

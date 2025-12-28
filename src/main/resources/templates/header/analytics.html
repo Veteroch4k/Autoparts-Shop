@@ -75,7 +75,6 @@
     let updateInterval = null;
     let currentDays = 7;
 
-    // Настройки шрифтов как в шаблоне SB Admin
     Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#292b2c';
 
@@ -175,7 +174,7 @@
     }
 
     function generateColors(count) {
-      // Базовая палитра (15 красивых цветов)
+      // Базовая палитра
       const baseColors = [
         '#007bff', '#dc3545', '#ffc107', '#28a745', '#17a2b8', '#6610f2',
         '#fd7e14', '#20c997', '#e83e8c', '#6f42c1', '#343a40', '#6c757d',
@@ -195,7 +194,6 @@
       return result.slice(0, count);
     }
 
-    // --- 2. Обнови функцию обновления графика ---
     async function updateBrandsChart() {
       try {
         const res = await fetch(`/api/analytics/brands`);
@@ -204,15 +202,13 @@
         brandsChart.data.labels = data.labels;
         brandsChart.data.datasets[0].data = data.values;
 
-        // ВОТ ЗДЕСЬ ГЛАВНОЕ ИЗМЕНЕНИЕ:
-        // Мы генерируем ровно столько цветов, сколько пришло брендов
+
         brandsChart.data.datasets[0].backgroundColor = generateColors(data.labels.length);
 
         brandsChart.update();
       } catch(e) { console.error(e); }
     }
 
-    // --- ДОП. ФУНКЦИИ ---
 
     function toggleAutoUpdate() {
       const isChecked = document.getElementById('autoUpdate').checked;
@@ -224,14 +220,13 @@
       }
     }
 
-    // Крутой экспорт всей страницы в PDF
+    //  экспорт в PDF
     function exportFullPdf() {
-      // Используем html2canvas чтобы сфоткать область контента
       const content = document.querySelector('.container-fluid');
 
       html2canvas(content).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
+        const pdf = new jsPDF('l', 'mm', 'a4');
 
         const imgProps= pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();

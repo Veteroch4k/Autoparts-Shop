@@ -6,10 +6,7 @@
     <div class="container-fluid px-4">
 
         <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
-            <h1>Dashboard</h1>
-            <button class="btn btn-sm btn-dark" onclick="exportFullPdf()">
-                <i class="fas fa-file-pdf me-1"></i> Скачать отчет
-            </button>
+            <h1>Главное меню</h1>
         </div>
 
         <ol class="breadcrumb mb-4">
@@ -19,7 +16,7 @@
         <div class="row">
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-primary text-white mb-4">
-                    <div class="card-body">Всего заказов</div>
+                    <div class="card-body">Задачи</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -28,7 +25,7 @@
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-warning text-white mb-4">
-                    <div class="card-body">Средний чек</div>
+                    <div class="card-body">Мероприятия</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -37,7 +34,7 @@
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-success text-white mb-4">
-                    <div class="card-body">Выручка (за сутки)</div>
+                    <div class="card-body">Календарь</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -46,7 +43,7 @@
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-danger text-white mb-4">
-                    <div class="card-body">Мало на складе</div>
+                    <div class="card-body">Жалобы клиентов</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-white stretched-link" href="#">Список</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -67,10 +64,7 @@
                                 <button class="btn btn-outline-secondary active" onclick="updateSalesChart(7, this)">7 дней</button>
                                 <button class="btn btn-outline-secondary" onclick="updateSalesChart(30, this)">30 дней</button>
                             </div>
-                            <div class="form-check form-switch m-0 d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" id="autoUpdate" onchange="toggleAutoUpdate()">
-                                <label class="form-check-label small ms-1 text-muted" for="autoUpdate">Live</label>
-                            </div>
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -95,38 +89,32 @@
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table me-1"></i>
-                Последние операции
+                Спонсоры
             </div>
             <div class="card-body">
                 <table id="datatablesSimple">
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
                         <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>Country</th>
+                        <th>Amount</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
                         <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
                         <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>Country</th>
+                        <th>Amount</th>
                     </tr>
                     </tfoot>
                     <tbody>
                     <tr>
                         <td>Tiger Nixon</td>
-                        <td>System Architect</td>
-                        <td>Edinburgh</td>
-                        <td>61</td>
-                        <td>2011/04/25</td>
-                        <td>$320,800</td>
+                        <td>52</td>
+                        <td>Slovakia</td>
+                        <td>$320.800</td>
                     </tr>
                     </tbody>
                 </table>
@@ -139,7 +127,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
-        // --- НАСТРОЙКИ CHART.JS (под стиль SB Admin) ---
         Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
         Chart.defaults.global.defaultFontColor = '#292b2c';
 
@@ -236,32 +223,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- ФУНКЦИИ ---
 
-        function toggleAutoUpdate() {
-            const isChecked = document.getElementById('autoUpdate').checked;
-            if (isChecked) {
-                updateInterval = setInterval(() => {
-                    updateSalesChart(currentDays, null);
-                    // Можно добавить анимацию иконки, чтобы видно было, что работает
-                }, 5000);
-            } else {
-                clearInterval(updateInterval);
-            }
-        }
-
-        function exportFullPdf() {
-            const content = document.querySelector('.container-fluid');
-            html2canvas(content).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('l', 'mm', 'a4');
-                const imgProps = pdf.getImageProperties(imgData);
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                pdf.save("dashboard-report.pdf");
-            });
-        }
     </script>
 </div>
 

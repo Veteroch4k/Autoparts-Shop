@@ -4,12 +4,14 @@ import com.popov314.autoparts.service.AnalyticsService;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('DIRECTOR') or hasRole ('SALES')" )
 public class AnalyticsRestController {
 
   private final AnalyticsService analyticsService;

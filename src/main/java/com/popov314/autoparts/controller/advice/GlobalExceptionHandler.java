@@ -1,6 +1,8 @@
 package com.popov314.autoparts.controller.advice;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,7 +15,9 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
       DataIntegrityViolationException.class,
       MethodArgumentTypeMismatchException.class,
-      MethodArgumentNotValidException.class
+      MethodArgumentNotValidException.class,
+      ConstraintViolationException.class,
+      TransactionSystemException.class
   })  public String handleDatabaseErrors(Exception ex, Model model) {
 
     model.addAttribute("message", "Ошибка операции: Введены некорректные данные. " +

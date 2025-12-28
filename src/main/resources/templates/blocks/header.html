@@ -28,6 +28,7 @@
         <li><a class="dropdown-item" th:href="@{/settings}">Разное</a></li>
         <li sec:authorize="hasAnyRole('DIRECTOR', 'SALES')">
           <a class="dropdown-item" th:href="@{/documents}">Отчеты</a>
+          <a class="dropdown-item" th:href="@{/analytics}">Аналитика</a>
           <a class="dropdown-item" th:href="@{/settings}">Настройки</a>
         </li>
         <li><hr class="dropdown-divider" /></li>

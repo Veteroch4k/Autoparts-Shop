@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru" th:replace="~{layout :: layout(~{::content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="container-fluid px-4">
+
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+      <h1 class="mt-0">Аналитика</h1>
+      <div class="btn-toolbar gap-2">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-secondary active btn-sm" onclick="updateSalesChart(7, this)">Неделя</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateSalesChart(30, this)">Месяц</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateSalesChart(0, this)">Всё</button>
+        </div>
+        <div class="input-group input-group-sm">
+          <div class="input-group-text bg-white">
+            <input class="form-check-input mt-0 me-2" type="checkbox" id="autoUpdate" onchange="toggleAutoUpdate()">
+            <label for="autoUpdate" class="mb-0 small">Live</label>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-dark" onclick="exportFullPdf()"><i class="fas fa-file-pdf"></i> Отчет</button>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-chart-area me-1"></i>
+        Динамика продаж
+      </div>
+      <div class="card-body">
+        <canvas id="salesChart" width="100%" height="30"></canvas>
+      </div>
+      <div class="card-footer small text-muted d-flex justify-content-between">
+        <span id="salesLastUpdate">Обновлено только что</span>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-lg-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <i class="fas fa-chart-bar me-1"></i>
+            Топ дорогих товаров
+          </div>
+          <div class="card-body">
+            <canvas id="pricesChart" width="100%" height="50"></canvas>
+          </div>
+          <div class="card-footer small text-muted">Статистика по базе данных</div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <i class="fas fa-chart-pie me-1"></i>
+            Бренды производителей
+          </div>
+          <div class="card-body">
+            <canvas id="brandsChart" width="100%" height="50"></canvas>
+          </div>
+          <div class="card-footer small text-muted">Доли рынка</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    // Глобальные переменные
+    let salesChart, pricesChart, brandsChart;
+    let updateInterval = null;
+    let currentDays = 7;
+
+    // Настройки шрифтов как в шаблоне SB Admin
+    Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.global.defaultFontColor = '#292b2c';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCharts();
+      fetchAllData();
+    });
+
+    function initCharts() {
+      // 1. Area Chart (Продажи)
+      salesChart = new Chart(document.getElementById("salesChart"), {
+        type: 'line',
+        data: { labels: [], datasets: [{
+            label: "Заказы",
+            lineTension: 0.3,
+            backgroundColor: "rgba(2,117,216,0.2)",
+            borderColor: "rgba(2,117,216,1)",
+            pointRadius: 5,
+            pointBackgroundColor: "rgba(2,117,216,1)",
+            pointBorderColor: "rgba(255,255,255,0.8)",
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(2,117,216,1)",
+            data: []
+          }]},
+        options: {
+          scales: {
+            xAxes: [{ time: { unit: 'date' }, gridLines: { display: false }, ticks: { maxTicksLimit: 7 } }],
+            yAxes: [{ ticks: { min: 0, maxTicksLimit: 5 }, gridLines: { color: "rgba(0, 0, 0, .125)" } }]
+          },
+          legend: { display: false }
+        }
+      });
+
+      // 2. Bar Chart (Цены)
+      pricesChart = new Chart(document.getElementById("pricesChart"), {
+        type: 'bar',
+        data: { labels: [], datasets: [{
+            label: "Цена",
+            backgroundColor: "rgba(2,117,216,1)",
+            borderColor: "rgba(2,117,216,1)",
+            data: []
+          }]},
+        options: {
+          scales: {
+            xAxes: [{ gridLines: { display: false }, ticks: { maxTicksLimit: 6 } }],
+            yAxes: [{ ticks: { min: 0, maxTicksLimit: 5 }, gridLines: { color: "rgba(0, 0, 0, .125)" } }]
+          },
+          legend: { display: false }
+        }
+      });
+
+      // 3. Pie Chart (Бренды)
+      brandsChart = new Chart(document.getElementById("brandsChart"), {
+        type: 'pie',
+        data: { labels: [], datasets: [{
+            data: [],
+            backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745', '#17a2b8', '#6610f2'],
+          }]}
+      });
+    }
+
+    // --- ЛОГИКА ОБНОВЛЕНИЯ ---
+
+    function fetchAllData() {
+      updateSalesChart(currentDays, null);
+      updatePricesChart();
+      updateBrandsChart();
+
+      // Обновляем текст в футере
+      const now = new Date();
+      document.getElementById('salesLastUpdate').innerText = 'Обновлено: ' + now.toLocaleTimeString();
+    }
+
+    async function updateSalesChart(days, btn) {
+      currentDays = days;
+      if(btn) {
+        document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      try {
+        const res = await fetch(`/api/analytics/sales?days=${days}`);
+        const data = await res.json();
+        salesChart.data.labels = data.labels;
+        salesChart.data.datasets[0].data = data.values;
+        salesChart.update();
+      } catch(e) { console.error(e); }
+    }
+
+    async function updatePricesChart() {
+      try {
+        const res = await fetch(`/api/analytics/prices`);
+        const data = await res.json();
+        pricesChart.data.labels = data.labels;
+        pricesChart.data.datasets[0].data = data.values;
+        pricesChart.update();
+      } catch(e) { console.error(e); }
+    }
+
+    function generateColors(count) {
+      // Базовая палитра (15 красивых цветов)
+      const baseColors = [
+        '#007bff', '#dc3545', '#ffc107', '#28a745', '#17a2b8', '#6610f2',
+        '#fd7e14', '#20c997', '#e83e8c', '#6f42c1', '#343a40', '#6c757d',
+        '#1abc9c', '#2ecc71', '#3498db', '#9b59b6', '#34495e'
+      ];
+
+      let result = [...baseColors];
+
+      // Если брендов больше, чем цветов в палитре — генерируем случайные
+      while (result.length < count) {
+        // Генерируем случайный цвет (hex)
+        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+        result.push(randomColor);
+      }
+
+      // Обрезаем массив ровно под количество брендов
+      return result.slice(0, count);
+    }
+
+    // --- 2. Обнови функцию обновления графика ---
+    async function updateBrandsChart() {
+      try {
+        const res = await fetch(`/api/analytics/brands`);
+        const data = await res.json();
+
+        brandsChart.data.labels = data.labels;
+        brandsChart.data.datasets[0].data = data.values;
+
+        // ВОТ ЗДЕСЬ ГЛАВНОЕ ИЗМЕНЕНИЕ:
+        // Мы генерируем ровно столько цветов, сколько пришло брендов
+        brandsChart.data.datasets[0].backgroundColor = generateColors(data.labels.length);
+
+        brandsChart.update();
+      } catch(e) { console.error(e); }
+    }
+
+    // --- ДОП. ФУНКЦИИ ---
+
+    function toggleAutoUpdate() {
+      const isChecked = document.getElementById('autoUpdate').checked;
+      if (isChecked) {
+        // Обновляем всё раз в 5 секунд
+        updateInterval = setInterval(fetchAllData, 5000);
+      } else {
+        clearInterval(updateInterval);
+      }
+    }
+
+    // Крутой экспорт всей страницы в PDF
+    function exportFullPdf() {
+      // Используем html2canvas чтобы сфоткать область контента
+      const content = document.querySelector('.container-fluid');
+
+      html2canvas(content).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape orientation
+
+        const imgProps= pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save("full_report.pdf");
+      });
+    }
+  </script>
+</div>
+</body>
+</html>

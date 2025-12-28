@@ -19,6 +19,7 @@
           <thead>
           <tr>
             <th>ID</th>
+            <th>Название товара</th>
             <th>Количество</th>
             <th>Итоговая цена</th>
             <th>Дата продажи</th>
@@ -28,6 +29,7 @@
           <tbody>
           <tr th:each="sale : ${sales}">
             <td th:text="${sale.id}">1</td>
+            <td th:text="${sale.product!= null ? sale.product.name : ''}">Товар</td>
             <td th:text="${sale.quantity}">1</td>
             <td th:text="${sale.totalPrice}">100.00</td>
             <td th:text="${sale.saleDate}">2025-01-01</td>
@@ -35,6 +37,7 @@
               <button type="button" class="btn btn-warning btn-sm"
                       th:if="${perms.canEdit}"
                       th:data-id="${sale.id}"
+                      th:data-productid="${sale.product != null ? sale.product.id : ''}"
                       th:data-quantity="${sale.quantity}"
                       th:data-totalprice="${sale.totalPrice}"
                       onclick="fillForm(this)">
@@ -68,6 +71,7 @@
 
           <div class="row mb-3">
             <div class="row mb-3">
+              <th:block th:replace="~{blocks/forms :: inputField('product.id', 'Товар (ID)', 'number')}"></th:block>
               <th:block th:replace="~{blocks/forms :: inputField('quantity', 'Количество', 'number')}"></th:block>
               <th:block th:replace="~{blocks/forms :: inputField('totalPrice', 'Итоговая цена', 'number')}"></th:block>
             </div>
@@ -95,10 +99,12 @@
 
     function fillForm(button) {
       let id = button.getAttribute('data-id');
+      let productId = button.getAttribute('data-productid');
       let quantity = button.getAttribute('data-quantity');
       let totalPrice = button.getAttribute('data-totalprice');
 
       setVal(['fieldId'], id);
+      setVal(['fieldProductId', 'fieldProduct.id', 'fieldProduct'], productId);
       setVal(['fieldQuantity'], quantity);
       setVal(['fieldTotalPrice'], totalPrice);
 
@@ -112,6 +118,7 @@
 
     function clearForm() {
       setVal(['fieldId'], '');
+      setVal(['fieldProductId', 'fieldProduct.id', 'fieldProduct'], '');
       setVal(['fieldQuantity'], '');
       setVal(['fieldTotalPrice'], '');
 

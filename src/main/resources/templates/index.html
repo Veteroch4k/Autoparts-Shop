@@ -4,44 +4,51 @@
 
 <div th:fragment="content">
     <div class="container-fluid px-4">
-        <h1 class="mt-4">Dashboard</h1>
+
+        <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+            <h1>Dashboard</h1>
+            <button class="btn btn-sm btn-dark" onclick="exportFullPdf()">
+                <i class="fas fa-file-pdf me-1"></i> Скачать отчет
+            </button>
+        </div>
+
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard</li>
+            <li class="breadcrumb-item active">Обзор ключевых показателей</li>
         </ol>
 
         <div class="row">
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-primary text-white mb-4">
-                    <div class="card-body">Primary Card</div>
+                    <div class="card-body">Всего заказов</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-warning text-white mb-4">
-                    <div class="card-body">Warning Card</div>
+                    <div class="card-body">Средний чек</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-success text-white mb-4">
-                    <div class="card-body">Success Card</div>
+                    <div class="card-body">Выручка (за сутки)</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <a class="small text-white stretched-link" href="#">Подробнее</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6">
                 <div class="card bg-danger text-white mb-4">
-                    <div class="card-body">Danger Card</div>
+                    <div class="card-body">Мало на складе</div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-white stretched-link" href="#">View Details</a>
+                        <a class="small text-white stretched-link" href="#">Список</a>
                         <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                     </div>
                 </div>
@@ -49,22 +56,38 @@
         </div>
 
         <div class="row">
+
             <div class="col-xl-6">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-chart-area me-1"></i>
-                        Area Chart Example
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-chart-area me-1"></i> Динамика продаж</span>
+
+                        <div class="d-flex gap-2">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary active" onclick="updateSalesChart(7, this)">7 дней</button>
+                                <button class="btn btn-outline-secondary" onclick="updateSalesChart(30, this)">30 дней</button>
+                            </div>
+                            <div class="form-check form-switch m-0 d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" id="autoUpdate" onchange="toggleAutoUpdate()">
+                                <label class="form-check-label small ms-1 text-muted" for="autoUpdate">Live</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                    <div class="card-body">
+                        <canvas id="myAreaChart" width="100%" height="40"></canvas>
+                    </div>
                 </div>
             </div>
+
             <div class="col-xl-6">
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-chart-bar me-1"></i>
-                        Bar Chart Example
+                        Топ дорогих товаров
                     </div>
-                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                    <div class="card-body">
+                        <canvas id="myBarChart" width="100%" height="40"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -72,7 +95,7 @@
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table me-1"></i>
-                DataTable Example
+                Последние операции
             </div>
             <div class="card-body">
                 <table id="datatablesSimple">
@@ -105,27 +128,141 @@
                         <td>2011/04/25</td>
                         <td>$320,800</td>
                     </tr>
-                    <tr>
-                        <td>Garrett Winters</td>
-                        <td>Accountant</td>
-                        <td>Tokyo</td>
-                        <td>63</td>
-                        <td>2011/07/25</td>
-                        <td>$170,750</td>
-                    </tr>
-                    <tr>
-                        <td>Donna Snider</td>
-                        <td>Customer Support</td>
-                        <td>New York</td>
-                        <td>27</td>
-                        <td>2011/01/25</td>
-                        <td>$112,000</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // --- НАСТРОЙКИ CHART.JS (под стиль SB Admin) ---
+        Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+        Chart.defaults.global.defaultFontColor = '#292b2c';
+
+        let myAreaChart, myBarChart;
+        let updateInterval = null;
+        let currentDays = 7;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initCharts();
+            loadAllData();
+        });
+
+        function initCharts() {
+            // 1. AREA CHART (Продажи)
+            var ctxArea = document.getElementById("myAreaChart");
+            myAreaChart = new Chart(ctxArea, {
+                type: 'line',
+                data: { labels: [], datasets: [{
+                        label: "Заказы",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(2,117,216,0.2)",
+                        borderColor: "rgba(2,117,216,1)",
+                        pointRadius: 5,
+                        pointBackgroundColor: "rgba(2,117,216,1)",
+                        pointBorderColor: "rgba(255,255,255,0.8)",
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: "rgba(2,117,216,1)",
+                        pointHitRadius: 50,
+                        pointBorderWidth: 2,
+                        data: []
+                    }]},
+                options: {
+                    scales: {
+                        xAxes: [{ time: { unit: 'date' }, gridLines: { display: false }, ticks: { maxTicksLimit: 7 } }],
+                        yAxes: [{ ticks: { min: 0, maxTicksLimit: 5 }, gridLines: { color: "rgba(0, 0, 0, .125)" } }]
+                    },
+                    legend: { display: false }
+                }
+            });
+
+            // 2. BAR CHART (Цены)
+            var ctxBar = document.getElementById("myBarChart");
+            myBarChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: { labels: [], datasets: [{
+                        label: "Цена",
+                        backgroundColor: "rgba(2,117,216,1)",
+                        borderColor: "rgba(2,117,216,1)",
+                        data: []
+                    }]},
+                options: {
+                    scales: {
+                        xAxes: [{ time: { unit: 'month' }, gridLines: { display: false }, ticks: { maxTicksLimit: 6 } }],
+                        yAxes: [{ ticks: { min: 0, maxTicksLimit: 5 }, gridLines: { display: true } }]
+                    },
+                    legend: { display: false }
+                }
+            });
+        }
+
+        // --- ЗАГРУЗКА ДАННЫХ ИЗ API ---
+
+        function loadAllData() {
+            updateSalesChart(currentDays, null);
+            updatePricesChart();
+        }
+
+        async function updateSalesChart(days, btn) {
+            currentDays = days;
+            if(btn) {
+                document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            try {
+                // Стучимся в наш RestController
+                const res = await fetch(`/api/analytics/sales?days=${days}`);
+                const data = await res.json();
+
+                myAreaChart.data.labels = data.labels;
+                myAreaChart.data.datasets[0].data = data.values;
+                myAreaChart.update();
+            } catch(e) { console.error(e); }
+        }
+
+        async function updatePricesChart() {
+            try {
+                // Стучимся в RestController (Топ дорогих товаров)
+                const res = await fetch(`/api/analytics/prices`);
+                const data = await res.json();
+
+                myBarChart.data.labels = data.labels;
+                myBarChart.data.datasets[0].data = data.values;
+                myBarChart.update();
+            } catch(e) { console.error(e); }
+        }
+
+        // --- ФУНКЦИИ ---
+
+        function toggleAutoUpdate() {
+            const isChecked = document.getElementById('autoUpdate').checked;
+            if (isChecked) {
+                updateInterval = setInterval(() => {
+                    updateSalesChart(currentDays, null);
+                    // Можно добавить анимацию иконки, чтобы видно было, что работает
+                }, 5000);
+            } else {
+                clearInterval(updateInterval);
+            }
+        }
+
+        function exportFullPdf() {
+            const content = document.querySelector('.container-fluid');
+            html2canvas(content).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('l', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save("dashboard-report.pdf");
+            });
+        }
+    </script>
 </div>
 
 </body>

@@ -46,7 +46,6 @@ public class Order {
 
   @Column(name = "order_date", nullable = false)
   @CreationTimestamp
-  @NotNull
   private LocalDateTime orderDate;
 
   @Column(name = "order_price", nullable = false, precision = 10, scale = 2)

@@ -37,6 +37,16 @@ public class AnalyticsRestController {
     return prepareChartData(data);
   }
 
+  @GetMapping("/api/analytics/best-sellers")
+  public Map<String, Object> getBestSellers() {
+    Map<String, Integer> data = analyticsService.getTopSellingProducts();
+
+    return Map.of(
+            "labels", data.keySet(),
+            "values", data.values()
+    );
+  }
+
   // Вспомогательный метод для упаковки в JSON
   private Map<String, Object> prepareChartData(Map<?, ?> data) {
     Map<String, Object> response = new HashMap<>();
@@ -44,4 +54,7 @@ public class AnalyticsRestController {
     response.put("values", data.values());
     return response;
   }
+
+
+
 }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Руководство пользователя | Магазин автозапчастей</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .help-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .section-title {
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: #0d6efd;
+        }
+        .img-figure {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .img-figure img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .img-caption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #6c757d;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="help-container">
+
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold">Руководство пользователя</h1>
+            <p class="lead text-muted">Веб-приложение «Фрагмент информационной системы магазина автозапчастей»</p>
+        </div>
+
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Настоящее руководство описывает назначение, возможности и порядок работы с веб-приложением.
+        </div>
+
+        <h2 class="section-title" id="auth">1. Начало работы. Аутентификация</h2>
+        <p>Для начала работы запустите приложение. Первым откроется страница входа в систему.</p>
+        <p>Чтобы войти в систему:</p>
+        <ul>
+            <li>В поле <strong>«Логин»</strong> введите имя пользователя (например, <code>director</code>);</li>
+            <li>В поле <strong>«Пароль»</strong> введите ваш пароль;</li>
+            <li>Нажмите кнопку <strong>«Войти»</strong>.</li>
+        </ul>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.1.png}" alt="Страница входа" class="img-fluid">
+            <div class="img-caption">Рисунок А.1 – Страница входа в систему</div>
+        </div>
+
+        <h3 class="mt-4">Восстановление пароля</h3>
+        <p>В случае, если был забыт пароль, то его можно восстановить в окне «Забыли пароль?».</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.2.png}" alt="Восстановление пароля" class="img-fluid">
+            <div class="img-caption">Рисунок А.2 – Окно восстановления пароля</div>
+        </div>
+
+        <h3 class="mt-4">Регистрация</h3>
+        <p>Для новых пользователей системы есть отдельная страница регистрации.</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.3.png}" alt="Регистрация" class="img-fluid">
+            <div class="img-caption">Рисунок А.3 – Страница регистрации</div>
+        </div>
+
+        <h2 class="section-title" id="main-menu">2. Главный интерфейс</h2>
+        <p>Авторизовавшись, вы попадаете в главное меню. В центре расположен дашбоард.</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.4.png}" alt="Главное меню" class="img-fluid">
+            <div class="img-caption">Рисунок А.4 – Главное меню системы (Dashboard)</div>
+        </div>
+
+        <h2 class="section-title" id="tables">3. Работа с данными</h2>
+        <p>Пример таблицы с данными:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.5.png}" alt="Таблица данных" class="img-fluid">
+            <div class="img-caption">Рисунок А.5 – Пример таблицы с данными</div>
+        </div>
+
+        <p>Форма добавления новой записи:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.6.png}" alt="Форма добавления" class="img-fluid">
+            <div class="img-caption">Рисунок А.6 – Форма добавления/редактирования</div>
+        </div>
+
+        <h2 class="section-title" id="logout">4. Выход из системы</h2>
+        <p>Сообщение об успешном выходе:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.7.png}" alt="Экран выхода" class="img-fluid">
+            <div class="img-caption">Рисунок А.7 – Сообщение об успешном выходе</div>
+        </div>
+
+        <h2 class="section-title" id="settings">5. Настройки</h2>
+        <p>Страница настроек интерфейса и безопасности:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.8.png}" alt="Настройки" class="img-fluid">
+            <div class="img-caption">Рисунок А.8 – Страница настроек</div>
+        </div>
+
+        <h2 class="section-title" id="reports">6. Отчеты и Аналитика</h2>
+        <p>Конструктор SQL-отчетов:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.9.png}" alt="Отчеты" class="img-fluid">
+            <div class="img-caption">Рисунок А.9 – Конструктор SQL-отчетов</div>
+        </div>
+
+        <p>Аналитическая панель:</p>
+
+        <div class="img-figure">
+            <img th:src="@{/images/screenshots/A.10.png}" alt="Аналитика" class="img-fluid">
+            <div class="img-caption">Рисунок А.10 – Аналитическая панель</div>
+        </div>
+
+        <hr class="my-5">
+
+
+    </div>
+</div>
+
+</body>
+</html>

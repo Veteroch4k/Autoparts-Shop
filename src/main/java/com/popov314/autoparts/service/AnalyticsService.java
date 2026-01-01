@@ -29,7 +29,7 @@ public class AnalyticsService {
     return data;
   }
 
-  // Динамика продаж  с фильтром
+  //  Здесь Динамика продаж  с фильтром
   public Map<String, Integer> getSalesDynamics(int days) {
     String timeFilter = "";
 
@@ -57,7 +57,7 @@ public class AnalyticsService {
     return data;
   }
 
-  // Бренды
+  // тут Бренды
   public Map<String, Integer> getProductsByManufacture() {
     String sql = """
             SELECT m.name, COUNT(p.id) as cnt 
@@ -73,6 +73,29 @@ public class AnalyticsService {
       });
     } catch (Exception e) {
       System.err.println("Ошибка SQL (Brands): " + e.getMessage());
+    }
+    return data;
+  }
+
+  // Топ популярных товаров по количеству продаж
+  public Map<String, Integer> getTopSellingProducts() {
+    String sql = """
+            SELECT p.name, SUM(o.quantity) as total
+                        FROM orders o
+                        JOIN products p ON o.product_id = p.id
+                        GROUP BY p.name
+                        ORDER BY total DESC
+                        LIMIT 5""";
+
+    Map<String, Integer> data = new LinkedHashMap<>();
+    try {
+      jdbcTemplate.query(sql, rs -> {
+        String name = rs.getString("name");
+        if (name.length() > 20) name = name.substring(0, 20) + "...";
+        data.put(name, rs.getInt("total"));
+      });
+    } catch (Exception e) {
+      System.err.println("Ошибка SQL (Best Sellers): " + e.getMessage());
     }
     return data;
   }

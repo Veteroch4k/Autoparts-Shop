@@ -32,6 +32,11 @@ public class MainController {
     return "header/guide";
   }
 
+  @GetMapping("/help")
+  public String help() {
+    return "header/help";
+  }
+
   @GetMapping("/settings")
   public String settings() {
     return "header/settings";
